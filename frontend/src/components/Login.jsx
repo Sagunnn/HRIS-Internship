@@ -3,6 +3,8 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import Button from 'react-bootstrap/Button';
 import React, { useState } from 'react'
 import axios from 'axios'
+import {toast, ToastContainer }from 'react-toastify'
+import 'bootstrap/dist/css/bootstrap.css';
 const Login = () => {
     const [loginForm,setLoginForm]=useState({
         'username':'',
@@ -11,6 +13,14 @@ const Login = () => {
     const handleChange=(e)=>{
         setLoginForm({...loginForm,[e.target.name]:e.target.value})
     }
+    const notify=(err)=>{
+      if (err == 'err')
+        toast("Hello")
+      else
+        toast("Logged in successfully")
+    }
+    const token = localStorage.getItem('accessToken');
+    console.log(token)
     const handleSubmit = (e) => {
         e.preventDefault() // Prevents page reload on form submit
         
@@ -23,29 +33,26 @@ const Login = () => {
             localStorage.setItem('access_token', accessToken);
 
             console.log('access_token:', accessToken);
+            notify()
           })
           .catch(error => {
             console.error('Login failed:', error)
+            notify('err')
           })
       }
   return (
     <>
+    <ToastContainer/>
+    <div className="card">
+      <h3>Login</h3>
+    <div className="card-body">
     <form onSubmit={handleSubmit}>
-        <input type="text" name='username' onChange={handleChange} placeholder='Username'/>
-        <input type="password" name="password" onChange={handleChange} placeholder='Password' />
-        <button type='submit'>Login</button>
+        <input type="text" className='form-control' name='username' onChange={handleChange} placeholder='Username'/>
+        <input type="password" className='form-control' name="password" onChange={handleChange} placeholder='Password' />
+        <Button type='submit'>Login</Button>
     </form>
-    <form>
-      <div className="form-group">
-        <input type="text" className="form-control" id="formGroupExampleInput" placeholder="Username"/>
-      </div>
-      <div className="form-group">
-        <input type="text" className="form-control" id="formGroupExampleInput2" placeholder="Password" />
-      </div>
-      <div className='form-group'>
-        <Button>Submit</Button>
-      </div>
-    </form>
+    </div>
+    </div>
     </>
   )
 }

@@ -22,7 +22,7 @@ class UserCreateView(APIView):
     
     def post(self,request,*args,**kwargs):
         serializer=UserCreationSerializer(data=request.data)
-        if self.check_permission(request):
+        if self.check_permissions(request):
             if serializer.is_valid():
                 serializer.save()
                 return Response({'User Created Successfully'})
