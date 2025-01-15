@@ -1,59 +1,129 @@
-import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from "react";
+import { fetchUsers, updateUser, deleteUserMain } from "../api/users"; // Import fetch and update API calls
+import { toast, ToastContainer } from 'react-toastify';
 
 const Users = () => {
-    const [userData,setUserData]=useState([])
-   useEffect(()=>{
-    const fetchUser= async ()=>{
-        const token=localStorage.getItem("access_token")
-        try{
-            const response= await axios.get('http://127.0.0.1:8000/api/v1/users/',{
-                headers:{
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                }
-            })
-            console.log(response.data)
-            setUserData(response.data)
-        }
-        catch(error){
-            console.error(error.response)
-        }
+  const [userData, setUserData] = useState([]);
+  const [currentEditId, setCurrentEditId] = useState(null); // Track editing user
+  const [editForm, setEditForm] = useState(null); // Track form values for editing
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [deleteUser,setDeleteUser]=useState(null)
+
+  useEffect(() => {
+    const getUsers = async () => {
+      try {
+        const data = await fetchUsers();
+        setUserData(data);
+      } catch (err) {
+        setError("Failed to load user data.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getUsers();
+  }, []);
+
+  // Handle "Edit" button click
+  const handleEditClick = (user) => {
+    setCurrentEditId(user.id);
+    setEditForm({ ...user }); // Populate form with user's data
+  };
+
+  // Handle form field change
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditForm({ ...editForm, [name]: value });
+  };
+
+  // Handle "Save" button click
+  const handleSaveClick = async () => {
+    try {
+      const updatedUser = await updateUser(editForm.id, editForm); // API call
+      setUserData((prev) =>
+        prev.map((user) => (user.id === updatedUser.id ? updatedUser : user))
+      );
+      setCurrentEditId(null); // Exit edit mode
+    } catch (err) {
+      console.error("Failed to update user:", err);
     }
-    fetchUser()
-   },[])
+  };
+
+  // Handle "Cancel" button click
+  const handleCancelClick = () => {
+    setCurrentEditId(null); // Exit edit mode without saving
+  };
+
+  const handleDeleteClick = async (userId) => {
+    try {
+      await deleteUserMain(userId); // Delete user via API
+      setUserData((prevData) => prevData.filter((user) => user.id !== userId)); // Remove user from UI
+      toast("User deleted successfully!"); // Optional: display success message
+    } catch (err) {
+      console.error("Failed to delete user:", err);
+      toast("Failed to delete user."); // Optional: display error message
+    }
+  };
+  
   return (
     <div>
       <h1>User Data</h1>
-      {/* Check if data is loaded before rendering */}
-      {userData.length > 0 ? (
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      {loading ? (
+        <p>Loading data...</p>
+      ) : (
         <ul>
           {userData.map((user) => (
-            <li key={user.id}>{user.id}
-              <strong>Username:</strong> {user.username} <br />
-              <strong>Email:</strong> {user.email} <br />
-              <strong>First Name:</strong> {user.first_name || "N/A"} <br />
-              <strong>Last Name:</strong> {user.last_name || "N/A"} <br />
-              <strong>Role:</strong> {user.role} <br />
-              <strong>Profile Picture:</strong> {user.profile_picture ? (
-                <img src={user.profile_picture} alt="Profile" width="50" height="50" />
+            <li key={user.id}>
+              {currentEditId === user.id ? (
+                // Editable form
+                <div>
+                  <input
+                    type="text"
+                    name="username"
+                    value={editForm.username}
+                    onChange={handleInputChange}
+                  />
+                  <input
+                    type="email"
+                    name="email"
+                    value={editForm.email}
+                    onChange={handleInputChange}
+                  />
+                  <input type='text' name='first_name' value={editForm.first_name} onChange={handleInputChange}/>
+                  <input
+                    type="password"
+                    name="password"
+                    value={editForm.password}
+                    onChange={handleInputChange}
+                  />
+                  <input
+                    type="password"
+                    name="confirm_password"
+                    value={editForm.confirm_password}
+                    onChange={handleInputChange}
+                  />
+                  <button onClick={handleSaveClick}>Save</button>
+                  <button onClick={handleCancelClick}>Cancel</button>
+                </div>
               ) : (
-                "No picture"
+                // Static data display
+                <div>
+                  <strong>Username:</strong> {user.username} <br />
+                  <strong>Email:</strong> {user.email} <br />
+                  <strong>First Name:</strong> {user.first_name || "N/A"} <br />
+                  <strong>Last Name:</strong> {user.last_name || "N/A"} <br />
+                  <button onClick={() => handleEditClick(user)}>Edit</button>
+                  <button onClick={()=>handleDeleteClick(user.id)}>Delete</button>
+                </div>
               )}
-              <br />
-              <strong>Status:</strong> {user.is_active ? "Active" : "Inactive"} <br />
-              <strong>Staff:</strong> {user.is_staff ? "Yes" : "No"} <br />
-              <strong>Superuser:</strong> {user.is_superuser ? "Yes" : "No"} <br />
-              <strong>Date Joined:</strong> {new Date(user.date_joined).toLocaleString()} <br />
-              <strong>Last Login:</strong> {new Date(user.last_login).toLocaleString()} <br />
             </li>
           ))}
         </ul>
-      ) : (
-        <p>Loading data...</p> // Show loading text if data is not yet fetched
       )}
     </div>
-  )
-}
+  );
+};
 
-export default Users
+export default Users;

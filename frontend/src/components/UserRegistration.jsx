@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import axios from 'axios'
+import { createUser } from '../api/users'
 const UserRegistration = () => {
     const [formData,setFormData]=useState({
         'username':'',
@@ -14,19 +15,7 @@ const UserRegistration = () => {
     const handleSubmit=(e)=>{
       e.preventDefault()
       console.log(formData)
-      
-      const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM2NDE0MTIwLCJpYXQiOjE3MzY0MTA1MjAsImp0aSI6ImFmNTJlM2JlN2RlYjQ3YWU5N2ZlNDgyNjIzMjU4OGE5IiwidXNlcl9pZCI6MX0.NaU_12Ko3P9LG4o7PB74uX-3feiNkt5ZBbTcye7f2cc"
-
-      if (!token) {
-        console.log("No access token found.");
-        return;
-      }
-       axios.post('http://127.0.0.1:8000/api/v1/create_user/',formData,{
-        headers:{
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        }
-       })
+      createUser(formData)
     }
   return (
     <form onSubmit={handleSubmit}>

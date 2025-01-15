@@ -38,6 +38,7 @@ class UserCreateView(APIView):
             return Response(serializer.data,status=status.HTTP_200_OK)
         else:
             return Response({'not authorized'},status=status.HTTP_403_FORBIDDEN)
+        
     
 class HomeView(APIView):
     permission_classes=[IsAuthenticated]
