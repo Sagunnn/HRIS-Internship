@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { fetchUsers, updateUser, deleteUserMain } from "../api/users"; // Import fetch and update API calls
+import { fetchUsers, updateUser, deleteUserMain } from "../services/users"; // Import fetch and update API calls
 import { toast, ToastContainer } from 'react-toastify';
 
 const Users = () => {
@@ -65,6 +65,7 @@ const Users = () => {
       toast("Failed to delete user."); // Optional: display error message
     }
   };
+  const BASE_URL="http://127.0.0.1:8000/api/v1"
   
   return (
     <div>
@@ -110,13 +111,25 @@ const Users = () => {
               ) : (
                 // Static data display
                 <div>
-                  <strong>Username:</strong> {user.username} <br />
-                  <strong>Email:</strong> {user.email} <br />
-                  <strong>First Name:</strong> {user.first_name || "N/A"} <br />
-                  <strong>Last Name:</strong> {user.last_name || "N/A"} <br />
-                  <button onClick={() => handleEditClick(user)}>Edit</button>
-                  <button onClick={()=>handleDeleteClick(user.id)}>Delete</button>
-                </div>
+                <strong>Username:</strong> {user.username} <br />
+                <strong>Email:</strong> {user.email} <br />
+                <strong>First Name:</strong> {user.first_name || "N/A"} <br />
+                <strong>Last Name:</strong> {user.last_name || "N/A"} <br />
+                <strong>Profile Picture:{user.profile_picture}</strong>{" "}
+                {user.profile_picture ? (
+                  <img
+                  src={`${BASE_URL}${user.profile_picture}`}
+                  alt="Profile"
+                  style={{ width: "50px", height: "50px", borderRadius: "50%" }}
+                />
+                ) : (
+                  "N/A"
+                )}
+                <br />
+                <button onClick={() => handleEditClick(user)}>Edit</button>
+                <button onClick={() => handleDeleteClick(user.id)}>Delete</button>
+              </div>
+              
               )}
             </li>
           ))}

@@ -1,21 +1,15 @@
 import axios from "axios";
-
+import { getAuthHeaders } from "./authorization";
 const API_BASE_URL = "http://127.0.0.1:8000/api/v1";
 
-// Get the access token from localStorage
-const getAuthHeaders = () => {
-  const token = localStorage.getItem("access_token");
-  return {
-    Authorization: `Bearer ${token}`,
-    "Content-Type": "application/json",
-  };
-};
+
 
 // Fetch all users
 export const fetchUsers = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/users/`, {
       headers: getAuthHeaders(),
+      "Content-Type": "multipart/form-data",
     });
     return response.data;
   } catch (error) {
@@ -57,7 +51,7 @@ export const createUser= async(newUserData)=>{
         const response = await axios.post(`${API_BASE_URL}/create_user/`,newUserData, {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data",
           },
         })
         return response.data
@@ -65,4 +59,8 @@ export const createUser= async(newUserData)=>{
     catch (err) {
         throw err;
     }
+}
+
+export const getProfilePicture= async (URL)=>{
+    
 }

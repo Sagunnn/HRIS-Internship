@@ -4,11 +4,11 @@ import Button from 'react-bootstrap/Button';
 import React, { useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'bootstrap/dist/css/bootstrap.css';
-import { loginUser } from '../api/authorization'; // Import the login API function
+import { loginUser } from '../services/authorization'; // Import the login API function
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
-  // navigate = useNavigate()
+  const navigate = useNavigate()
   const [loginForm, setLoginForm] = useState({
     username: '',
     password: ''
@@ -40,7 +40,7 @@ const Login = () => {
 
       console.log('Access Token:', access);
       notify("Logged in successfully");
-      // navigate('homepage')
+      navigate('/homepage')
     } catch (error) {
       const errorMsg =
         error.response?.data?.detail || "An error occurred during login.";

@@ -24,3 +24,12 @@ export const loginUser = async (loginData) => {
     throw error; // Throw error to be caught in the component
   }
 };
+
+// Get the access token from localStorage
+export const getAuthHeaders = () => {
+  const token = localStorage.getItem("access_token");
+  return {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json",
+  };
+};
