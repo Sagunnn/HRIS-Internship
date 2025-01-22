@@ -79,6 +79,7 @@ const Users = () => {
             <li key={user.id}>
               {currentEditId === user.id ? (
                 // Editable form
+                
                 <div>
                   <input
                     type="text"
@@ -111,6 +112,7 @@ const Users = () => {
               ) : (
                 // Static data display
                 <div>
+                  <strong>Username:</strong> {user.id} <br />
                 <strong>Username:</strong> {user.username} <br />
                 <strong>Email:</strong> {user.email} <br />
                 <strong>First Name:</strong> {user.first_name || "N/A"} <br />

@@ -6,7 +6,7 @@ from django.conf.urls.static import static
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model=User
-        fields=['username','email','first_name','profile_picture']
+        fields=['id','username','email','first_name','profile_picture']
         extra_kwargs={
             'password':{'write_only':True}
         }
