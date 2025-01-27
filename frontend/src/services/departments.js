@@ -14,3 +14,28 @@ export const fetchDepartments= async () =>{
         return null
     }
 }
+
+export const createDepartment= async(newDepartment) =>{
+    const token= localStorage.getItem('access_token')
+    try{
+        const response= await axios.post(`${API_BASE_URL}/departments/`,newDepartment,{
+            headers:getAuthHeaders()
+        })
+        window.location.reload();
+    }
+    catch(err){
+        console.log(err)
+    }
+}
+
+export const deleteDepartmentMain= async (deptId)=>{
+    try{
+        const response= await axios.delete(`${API_BASE_URL}/departments/${deptId}/`,{
+            headers:getAuthHeaders()
+        })
+        window.location.reload();
+    }
+    catch(err){
+        console.log(err)
+    }
+}

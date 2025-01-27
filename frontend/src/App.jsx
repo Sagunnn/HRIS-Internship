@@ -9,7 +9,7 @@ import Departments from './components/Departments.jsx'
 import SideNavbar from './components/SideNavbar.jsx'
 import './main.css'
 import { TbBurger } from "react-icons/tb";
-
+import ProtectedRoute from './components/ProtectedRoute.jsx'
 const router=createBrowserRouter([
   {
     path:'/',
@@ -25,11 +25,11 @@ const router=createBrowserRouter([
   },
   {
     path:'/user_registration',
-    element:<UserRegistration />
+    element:<ProtectedRoute><UserRegistration /></ProtectedRoute>
   },
   {
     path:'/users',
-    element:<Users/>
+    element:<ProtectedRoute><Users/></ProtectedRoute>
   },
   {
     path: '/logout',
@@ -37,7 +37,9 @@ const router=createBrowserRouter([
   },
   {
     path: '/departments',
-    element: <Departments />
+    element: <ProtectedRoute>
+      <Departments />
+      </ProtectedRoute>
   }  
 
 ])
