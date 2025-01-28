@@ -39,3 +39,15 @@ export const deleteDepartmentMain= async (deptId)=>{
         console.log(err)
     }
 }
+
+export const editDepartmentMain= async (id,data)=>{
+    try{
+        const response=await axios.patch(`${API_BASE_URL}/departments/${id}/`,data,{
+            headers:getAuthHeaders()
+        })
+        window.location.reload();
+    }
+    catch(err){
+        console.log(err)
+    }
+}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { fetchDepartments,createDepartment, deleteDepartmentMain } from '../services/departments'
+import { fetchDepartments,createDepartment, deleteDepartmentMain,editDepartmentMain } from '../services/departments'
 const Departments = () => {
     const [departmentData,setDepartmentData]= useState([])
     const [newDepartment,setNewDepartment]=useState({
@@ -8,6 +8,7 @@ const Departments = () => {
         'manager':'',
     })
     const [showForm, setShowForm]=useState(false)
+    const [editDepartmentForm,setEditDepartmentForm]=useState(null)
     useEffect(()=>{
         const getDepartment= async () =>{
         try{
@@ -32,8 +33,20 @@ const Departments = () => {
         const {name, value}= e.target
         setNewDepartment({...newDepartment,[name]:value})
     }
-    const editDepartment=()=>{
-
+    const editDepartment=(department)=>{
+        setEditDepartmentForm({...department})
+    }
+    const handleInputChange=(e)=>{
+        const {name,value}=e.target
+        setEditDepartmentForm({...editDepartmentForm,[name]:value})
+    }
+    const handleSaveClick=async ()=>{
+        try{
+            const updatedDepartment= await editDepartmentMain(editDepartmentForm.id,editDepartmentForm)
+        }
+        catch{
+            console.log("Failed to update department")
+        }
     }
     const deleteDepartment= async(deptId)=>{
         try{
@@ -42,6 +55,9 @@ const Departments = () => {
         catch(err){
             console.log(err)
         }
+    }
+    const handleCancelClick=()=>{
+        setEditDepartmentForm(null)
     }
   return (
     <div>
@@ -56,11 +72,25 @@ const Departments = () => {
             <tbody>
             {departmentData.map((department)=>(
                 <tr key={department.id}>
+                    {editDepartmentForm && editDepartmentForm.id===department.id?(
+                        <>       
+                        <td><input onChange={handleInputChange} type="text" name="department_id" value={editDepartmentForm.department_id} placeholder='Department ID'/></td>
+                        <td><input onChange={handleInputChange} type="text" name="department_name" value={editDepartmentForm.department_name} placeholder='Department Name' /></td>
+                        <td><input onChange={handleInputChange} type="text" name="manager" value={editDepartmentForm.manager || ""} placeholder='Manager Name' /></td>
+                        <td><button type="button" onClick={handleSaveClick}>Save</button></td>
+                        <td><button type="button" onClick={handleCancelClick}>Cancel</button></td>
+                        </>
+                    ):(
+                     <>
                     <td>{department.department_name}</td>
                     <td>{department.department_id}</td>
                     <td>{department.manager? department.manager : "NULL"}</td>
-                    <td><button onClick={()=>editDepartment}>Edit</button></td>
+                    <td><button onClick={()=>editDepartment(department)}>Edit</button></td>
                     <td><button onClick={()=>deleteDepartment(department.id)}>Delete</button></td>
+                    </>
+                    )
+                    }
+                    
                 </tr>
             ))}
             </tbody>
@@ -71,7 +101,7 @@ const Departments = () => {
                 <input type="text" name="department_name" placeholder='Department Name'onChange={handleChange}/>
                 <input type="text" name="department_id" placeholder='Department ID' onChange={handleChange}/>
                 <input type="text" name="manager" placeholder='Manager Name' onChange={handleChange}/>
-                <button type="submit">Save</button>
+                <button type="submit">Create</button>
             </form>
         )}
     </div>

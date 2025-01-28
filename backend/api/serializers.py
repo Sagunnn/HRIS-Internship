@@ -24,7 +24,7 @@ class UserCreationSerializer(serializers.ModelSerializer):
     
     class Meta:
         model=User
-        fields=['username','email','profile_picture','password','confirm_password']
+        fields=['username','email','profile_picture','is_staff','password','confirm_password']
         extra_kwargs={'password':{'write_only':True}}
     def validate(self,attr):
         if attr['password']!=attr['confirm_password']:

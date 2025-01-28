@@ -6,6 +6,7 @@ const UserRegistration = () => {
         'username':'',
         'email':'',
         'profile_picture':null,
+        'is_staff':false,
         'password':'',
         'confirm_password':''
     })
@@ -24,11 +25,12 @@ const UserRegistration = () => {
     }
   return (
     <form onSubmit={handleSubmit}>
-        <input type="text" name='username' onChange={handleChange} placeholder='Username'/>
-        <input type="email" name="email" onChange={handleChange} placeholder='Email' />
-        <input type="file" name="profile_picture" onChange={handleFileChange} placeholder='image'/>
-        <input type="password" name="password" onChange={handleChange} placeholder='Password' />
-        <input type="password" name="confirm_password" onChange={handleChange} placeholder='Password'/>
+        <input type="text" name='username' onChange={handleChange} placeholder='Username'/><br/>
+        <input type="email" name="email" onChange={handleChange} placeholder='Email' /><br/>
+        <input type="file" name="profile_picture" onChange={handleFileChange} placeholder='image'/><br/>
+        <input type="checkbox" name="is_staff" /><label>Is Staff</label><br/>
+        <input type="password" name="password" onChange={handleChange} placeholder='Password' /><br/>
+        <input type="password" name="confirm_password" onChange={handleChange} placeholder='Confirm Password'/><br/>
         <button type='submit'>Create</button>
     </form>
   )
