@@ -10,6 +10,7 @@ import SideNavbar from './components/SideNavbar.jsx'
 import './main.css'
 import { TbBurger } from "react-icons/tb";
 import ProtectedRoute from './components/ProtectedRoute.jsx'
+import AdminDashboard from './components/Admin/AdminDashboard.jsx'
 const router=createBrowserRouter([
   {
     path:'/',
@@ -40,7 +41,12 @@ const router=createBrowserRouter([
     element: <ProtectedRoute>
       <Departments />
       </ProtectedRoute>
-  }  
+  } ,
+  {path:'/admin',
+  element:<ProtectedRoute>
+    <AdminDashboard/>
+  </ProtectedRoute>
+}
 
 ])
 const App = () => {
@@ -50,10 +56,10 @@ const App = () => {
   }
   return (
     <div>
-      <header onClick={toggleSideNavbar}>
+      {/* <header onClick={toggleSideNavbar}>
         <TbBurger size={35}/>
       </header>
-      <SideNavbar prop={sideNavbar} />
+      <SideNavbar prop={sideNavbar} /> */}
       <div className="main">
         <RouterProvider router={router}/>
       </div>

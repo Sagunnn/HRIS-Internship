@@ -1,0 +1,62 @@
+body {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    color: grey;
+}
+
+header {
+    padding: 30px;
+    background: black;
+    height: 70px;
+}
+
+.side_navbar {
+    width: 240px;
+    background: rgb(15, 13, 13);
+    position: fixed; /* Fix the sidebar in place */
+    height: 100vh;  /* Make the sidebar take full screen height */
+    top: 0;
+    left: 0; /* Ensure it is on the left side of the screen */
+    padding: 20px 10px; /* Adjust padding for aesthetics */
+    transition: all 1s;
+    z-index: 1000;  /* Ensure it stays on top of other elements */
+}
+
+ul {
+    padding: 0;
+    margin: 10px 0;
+}
+
+ul li {
+    list-style-type: none;
+}
+
+ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    display: block;
+    padding: 10px 15px;
+    border-radius: 6px;
+}
+
+ul li a:hover {
+    background: aquamarine;
+}
+
+ul li a.active {
+    background: aquamarine;
+}
+
+.logo {
+    margin: 10px 60px;
+    width: 100px;
+}
+
+.main {
+    display: flex;
+    margin-left: 240px; /* This should match the sidebar width */
+    padding: 20px;
+}

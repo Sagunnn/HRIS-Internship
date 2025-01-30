@@ -2,11 +2,11 @@ from authentication.models import User
 from rest_framework import serializers
 from django.conf import settings
 from django.conf.urls.static import static
-
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model=User
-        fields=['id','username','email','first_name','profile_picture']
+        fields=['id','username','email','first_name','role','profile_picture']
         extra_kwargs={
             'password':{'write_only':True}
         }
@@ -35,3 +35,13 @@ class UserCreationSerializer(serializers.ModelSerializer):
         password=validated_data.pop('password')
         validated_data.pop('confirm_password')
         return User.objects.create_user(password=password,**validated_data)
+    
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Add custom claims
+        token['role'] = user.role  # Add user role to the token
+
+        return token

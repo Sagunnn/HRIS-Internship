@@ -5,7 +5,7 @@ const Logout = () => {
     const handleLogout =() =>{
         localStorage.removeItem("access_token")
         localStorage.removeItem("refresh_token")
-
+        localStorage.removeItem("role")
         navigate('/login')
     }
   return (

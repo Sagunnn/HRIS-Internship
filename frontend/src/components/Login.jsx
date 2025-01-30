@@ -32,15 +32,16 @@ const Login = () => {
     try {
       // Call the loginUser function
       const data = await loginUser(loginForm);
-      const { access, refresh } = data;
-
-      // Store tokens in localStorage
-      localStorage.setItem('access_token', access);
-      localStorage.setItem('refresh_token', refresh);
-
-      console.log('Access Token:', access);
       notify("Logged in successfully");
-      navigate('/homepage')
+      const role=localStorage.getItem('role')
+      if (role==='Admin'){
+        navigate('/admin')
+      }
+      else{
+        navigate('/')
+      }
+      
+        
     } catch (error) {
       const errorMsg =
         error.response?.data?.detail || "An error occurred during login.";
@@ -55,6 +56,10 @@ const Login = () => {
         <h3>Login</h3>
         <div className="card-body">
           <form onSubmit={handleSubmit}>
+            <select name="role">
+              <option value="Admin">Admin</option>
+              <option value="Employee">Employee</option>
+            </select>
             <input
               type="text"
               className="form-control"

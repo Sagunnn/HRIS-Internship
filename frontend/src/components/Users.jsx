@@ -94,6 +94,11 @@ const Users = () => {
                     onChange={handleInputChange}
                   />
                   <input type='text' name='first_name' value={editForm.first_name} onChange={handleInputChange}/>
+                  <select name="role" value={editForm.role} onChange={handleInputChange}>
+                    <option value="Admin">Admin</option>
+                    <option value="Manager">Manager</option>
+                    <option value="Employee">Employee</option>
+                  </select>
                   <input
                     type="password"
                     name="password"
@@ -117,6 +122,7 @@ const Users = () => {
                 <strong>Email:</strong> {user.email} <br />
                 <strong>First Name:</strong> {user.first_name || "N/A"} <br />
                 <strong>Last Name:</strong> {user.last_name || "N/A"} <br />
+                <strong>Role:{user.role}</strong><br/>
                 <strong>Profile Picture:{user.profile_picture}</strong>{" "}
                 {user.profile_picture ? (
                   <img

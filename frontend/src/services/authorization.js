@@ -1,5 +1,5 @@
 import axios from "axios";
-
+import {jwtDecode} from "jwt-decode"
 // Base URL for API
 const BASE_URL = "http://127.0.0.1:8000/api/v1";
 
@@ -9,11 +9,13 @@ export const loginUser = async (loginData) => {
     const response = await axios.post(`${BASE_URL}/token/`, loginData);
      // Extract tokens from the response
      const { access, refresh } = response.data;
-
+    const deCodedToken=jwtDecode(access)
+    
+    localStorage.setItem("role",deCodedToken.role)
      // Store tokens in localStorage
      localStorage.setItem("access_token", access);
      localStorage.setItem("refresh_token", refresh);
- 
+     console.log(deCodedToken.role)
      console.log("Tokens stored successfully:");
      console.log("Access Token:", access);
      console.log("Refresh Token:", refresh);
@@ -33,3 +35,5 @@ export const getAuthHeaders = () => {
     "Content-Type": "application/json",
   };
 };
+
+

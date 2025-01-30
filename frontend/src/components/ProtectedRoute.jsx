@@ -1,7 +1,9 @@
 import React from 'react'
 import { Navigate } from 'react-router'
 import { jwtDecode } from 'jwt-decode'; 
-const ProtectedRoute = ({children}) => {
+import AdminDashboard from './Admin/AdminDashboard';
+
+const ProtectedRoute = ({children,allowedRole}) => {
     const token= localStorage.getItem('access_token')
     if (!token){
         console.log('No token found, redirecting to login');
@@ -21,6 +23,19 @@ const ProtectedRoute = ({children}) => {
         localStorage.removeItem("access")
         return <Navigate to= '/login'/>
     }
+    // const role=localStorage.getItem('role')
+    // if (role === 'Admin'){
+    //     return (
+    //         <>
+    //             <AdminDashboard/>
+    //         </>
+    //     )
+       
+        
+    // }
+    // else{
+    //     <Navigate to='/employee'/>
+    // }
   return children
 }
 
