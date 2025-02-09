@@ -14,13 +14,13 @@ header{
 }
 
 
-.side_navbar{
+.employee_navbar{
     width:240px;
     background:rgb(15, 13, 13);
     position: absolute;
     height:95vh;
     padding: 0 10px;
-    left:-100%;
+    /* left:-100%; */
     transition: all 1s;
 
 }

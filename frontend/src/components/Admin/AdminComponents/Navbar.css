@@ -14,7 +14,7 @@ header {
 
 .side_navbar {
     width: 240px;
-    background: rgb(15, 13, 13);
+    background: rgb(83, 19, 19);
     position: fixed; /* Fix the sidebar in place */
     height: 100vh;  /* Make the sidebar take full screen height */
     top: 0;

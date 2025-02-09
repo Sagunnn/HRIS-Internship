@@ -1,15 +1,24 @@
 import React from 'react'
 import logo from '../assets/logo.png'
+import { Link, useNavigate } from 'react-router'
+import '../main.css'
 const SideNavbar = ({prop}) => {
+  const navigate=useNavigate()
+  const handleLogout= () => {
+    localStorage.removeItem('access_token')
+    localStorage.removeItem('refresh_token')
+    localStorage.removeItem('role')
+    navigate('/login')
+  }
   return (
-    <div className={prop? 'side_navbar active' : 'side_navbar'}>
+    <div className='employee_navbar'>
       <img src={logo} alt="Logo" className='logo' />
       <ul>
-        <li><a href='/'>Home</a></li>
-        <li><a href='/users'>Users</a></li>
-        <li><a href='/user_registration'>User Registration</a></li>
-        <li><a href="/departments">Departments</a></li>
-        <li><a href='/login'>Login</a></li>
+        <li><Link to='/employee/'>Dashboard</Link></li>
+        <li><Link to='/employee/profile'>Profile</Link></li>
+        <li><Link to='/employee/attendance'>Attendance</Link></li>
+        <li><Link to="/employee/leave_requests">Leave Requests</Link></li>
+        <li><button onClick={handleLogout}>Logout</button></li> 
       </ul>
     </div>
   )
