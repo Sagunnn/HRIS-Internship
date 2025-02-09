@@ -6,7 +6,7 @@ const Logout = () => {
         localStorage.removeItem("access_token")
         localStorage.removeItem("refresh_token")
         localStorage.removeItem("role")
-        navigate('/login')
+        window.location.href = "/login";
     }
   return (
     <div>

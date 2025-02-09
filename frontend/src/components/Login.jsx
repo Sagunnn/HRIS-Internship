@@ -35,10 +35,10 @@ const Login = () => {
       notify("Logged in successfully");
       const role=localStorage.getItem('role')
       if (role==='Admin'){
-        navigate('/admin')
+        window.location.href = "/admin";
       }
       else{
-        navigate('/employee')
+        window.location.href = "/employee";
       }
       
         

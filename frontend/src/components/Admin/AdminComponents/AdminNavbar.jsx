@@ -12,6 +12,7 @@ const AdminNavbar = (prop) => {
       localStorage.removeItem('access_token')
       localStorage.removeItem('refresh_token')
       localStorage.removeItem('role')
+      window.location.reload()
     }
   return (
     <div className={prop? 'side_navbar active' : 'side_navbar'}>

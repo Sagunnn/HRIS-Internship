@@ -14,6 +14,7 @@ import ProtectedRoute from './components/ProtectedRoute.jsx'
 import AdminDashboard from './components/Admin/AdminDashboard.jsx'
 import EmployeeDashboard from './components/Employee/EmployeeDashboard.jsx'
 import AdminNavbar from './components/Admin/AdminComponents/AdminNavbar.jsx'
+import UserProfile from './components/Employee/UserProfile.jsx'
 
 const App = () => {
   const [sideNavbar,setSideNavbar] =useState(true)
@@ -89,7 +90,7 @@ const App = () => {
           }
         />
         <Route path='/employee' element={<Users/>}/>
-        <Route path='' element=''/>
+        <Route path='/employee/profile' element={<UserProfile/>}/>
         <Route path='' element=''/>
         <Route path='' element=''/>
       </Routes>
