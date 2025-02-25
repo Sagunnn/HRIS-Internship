@@ -15,6 +15,8 @@ import AdminDashboard from './components/Admin/AdminDashboard.jsx'
 import EmployeeDashboard from './components/Employee/EmployeeDashboard.jsx'
 import AdminNavbar from './components/Admin/AdminComponents/AdminNavbar.jsx'
 import UserProfile from './components/Employee/UserProfile.jsx'
+import EmployeesList from './components/Employee/EmployeesList.jsx'
+import Leaves from './components/Employee/Leaves.jsx'
 
 const App = () => {
   const [sideNavbar,setSideNavbar] =useState(true)
@@ -91,7 +93,8 @@ const App = () => {
         />
         <Route path='/employee' element={<Users/>}/>
         <Route path='/employee/profile' element={<UserProfile/>}/>
-        <Route path='' element=''/>
+        <Route path='/employee/employee_list' element={<EmployeesList/>}/>
+        <Route path='/employee/leave_requests' element={<Leaves/>}/>
         <Route path='' element=''/>
       </Routes>
       </div>

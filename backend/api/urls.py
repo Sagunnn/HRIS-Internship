@@ -12,6 +12,8 @@ urlpatterns = [
     path('home/',HomeView.as_view(),name='home'),
     path('create_user/',UserCreateView.as_view(),name='create_user'),
     path('departments/',include('departments.urls')),
+    path('leaves/',include('leaves.urls')),
+    path('register-employee/',include('employees.urls')),
 ]
 
 if settings.DEBUG:

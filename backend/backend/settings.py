@@ -38,14 +38,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'api',
-    'authentication',
-    'employees',
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
+    'api',
+    'authentication',
+    'employees',
     "phonenumber_field",
     'departments',
+    'leaves',
 ]
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (

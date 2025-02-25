@@ -17,7 +17,7 @@ header {
     background: rgb(83, 19, 19);
     position: fixed; /* Fix the sidebar in place */
     height: 100vh;  /* Make the sidebar take full screen height */
-    top: 0;
+    top: 0;w
     left: 0; /* Ensure it is on the left side of the screen */
     padding: 20px 10px; /* Adjust padding for aesthetics */
     transition: all 1s;

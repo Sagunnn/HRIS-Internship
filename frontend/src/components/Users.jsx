@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { fetchUsers, updateUser, deleteUserMain } from "../services/users"; // Import fetch and update API calls
 import { toast, ToastContainer } from 'react-toastify';
+import CreateUserForm from "./Admin/AdminComponents/CreateUserForm";
 
 const Users = () => {
   const [userData, setUserData] = useState([]);
@@ -143,6 +144,7 @@ const Users = () => {
           ))}
         </ul>
       )}
+      <CreateUserForm/>
     </div>
   );
 };

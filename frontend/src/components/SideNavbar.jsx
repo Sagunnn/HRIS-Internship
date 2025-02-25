@@ -17,6 +17,7 @@ const SideNavbar = ({prop}) => {
         <li><Link to='/employee/'>Dashboard</Link></li>
         <li><Link to='/employee/profile'>Profile</Link></li>
         <li><Link to='/employee/attendance'>Attendance</Link></li>
+        <li><Link to='/employee/employee_list'>Employee List</Link></li>
         <li><Link to="/employee/leave_requests">Leave Requests</Link></li>
         <li><button onClick={handleLogout}>Logout</button></li> 
       </ul>
