@@ -1,17 +1,16 @@
-import 'mdb-react-ui-kit/dist/css/mdb.min.css';
-import "@fortawesome/fontawesome-free/css/all.min.css";
-import Button from 'react-bootstrap/Button';
-import React, { useState } from 'react';
-import { toast, ToastContainer } from 'react-toastify';
-import 'bootstrap/dist/css/bootstrap.css';
-import { loginUser } from '../services/authorization'; // Import the login API function
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { loginUser } from "../services/authorization";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "react-toastify/dist/ReactToastify.css";
+// import "../styles/login.css"; // Optional: Add custom styles
 
 const Login = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [loginForm, setLoginForm] = useState({
-    username: '',
-    password: ''
+    username: "",
+    password: "",
   });
 
   const handleChange = (e) => {
@@ -19,29 +18,19 @@ const Login = () => {
   };
 
   const notify = (message, isError = false) => {
-    if (isError) {
-      toast.error(message);
-    } else {
-      toast.success(message);
-    }
+    isError ? toast.error(message) : toast.success(message);
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevents page reload on form submit
-
+    e.preventDefault();
     try {
-      // Call the loginUser function
-      const data = await loginUser(loginForm);
+      await loginUser(loginForm);
       notify("Logged in successfully");
-      const role=localStorage.getItem('role')
-      if (role==='Admin'){
-        window.location.href = "/admin";
-      }
-      else{
-        window.location.href = "/employee";
-      }
-      
-        
+
+      const role = localStorage.getItem("role");
+      role === "Admin"
+        ? (window.location.href = "/admin")
+        : (window.location.href = "/employee");
     } catch (error) {
       const errorMsg =
         error.response?.data?.detail || "An error occurred during login.";
@@ -52,30 +41,55 @@ const Login = () => {
   return (
     <>
       <ToastContainer />
-      <div className="card">
-        <h3>Login</h3>
-        <div className="card-body">
+      <div className="container vh-100 d-flex justify-content-center align-items-center">
+        <div className="card shadow-lg p-4" style={{ width: "350px" }}>
+          <h3 className="text-center text-primary fw-bold">Login</h3>
+          <p className="text-center text-muted">Enter your credentials</p>
+
           <form onSubmit={handleSubmit}>
-            <select name="role">
-              <option value="Admin">Admin</option>
-              <option value="Employee">Employee</option>
-            </select>
-            <input
-              type="text"
-              className="form-control"
-              name="username"
-              onChange={handleChange}
-              placeholder="Username"
-            />
-            <input
-              type="password"
-              className="form-control"
-              name="password"
-              onChange={handleChange}
-              placeholder="Password"
-            />
-            <Button type="submit">Login</Button>
+            <div className="mb-3">
+              <label className="form-label">Role</label>
+              <select name="role" className="form-select">
+                <option value="Admin">Admin</option>
+                <option value="Employee">Employee</option>
+              </select>
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label">Username</label>
+              <input
+                type="text"
+                className="form-control"
+                name="username"
+                onChange={handleChange}
+                placeholder="Enter username"
+                required
+              />
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label">Password</label>
+              <input
+                type="password"
+                className="form-control"
+                name="password"
+                onChange={handleChange}
+                placeholder="Enter password"
+                required
+              />
+            </div>
+
+            <button className="btn btn-primary w-100" type="submit">
+              Login
+            </button>
           </form>
+
+          <p className="text-center mt-3">
+            Don't have an account?{" "}
+            <a href="#" className="text-primary fw-bold">
+              Sign Up
+            </a>
+          </p>
         </div>
       </div>
     </>

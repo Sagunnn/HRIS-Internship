@@ -8,9 +8,9 @@ const EmployeesList = () => {
         <MDBTableHead>
           <tr>
             <th scope='col'>Name</th>
-            <th scope='col'>Title</th>
-            <th scope='col'>Status</th>
-            <th scope='col'>Position</th>
+            <th scope='col'>Department</th>
+            <th scope='col'>Email</th>
+            <th scope='col'>Phone no.</th>
             <th scope='col'>Actions</th>
           </tr>
         </MDBTableHead>
