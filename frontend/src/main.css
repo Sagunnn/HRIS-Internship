@@ -1,10 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
 body{
     box-sizing: border-box;
     margin:0;
     padding: 0;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Poppins', sans-serif;
     color:grey;
-    
+    font-size: 0.8rem;
 }
 
 header{
@@ -14,46 +16,42 @@ header{
 }
 
 
-.employee_navbar{
-    width:240px;
-    background:rgb(15, 13, 13);
-    position: absolute;
-    height:95vh;
-    padding: 0 10px;
-    /* left:-100%; */
+.employee_navbar {
+    width: 240px;
+    background: #29ABE1;
+    position: fixed; /* Fix the sidebar in place */
+    height: 100vh;  /* Make the sidebar take full screen height */
+    top: 0;
+    left: 0; /* Ensure it is on the left side of the screen */
+    padding: 20px 0px; /* Adjust padding for aesthetics */
     transition: all 1s;
-
+    z-index: 1000;  /* Ensure it stays on top of other elements */
 }
 
-.side_navbar.active{
-    left:0;
+ul {
+    padding: 0;
+    margin: 0px 0;
 }
 
-ul{
-    padding:0;
-    margin:10px 0;
-}
-
-ul li{
+ul li {
     list-style-type: none;
 }
 
-ul li a{
-    color:white;
+ul li a {
+    color: white;
     text-decoration: none;
     font-size: 16px;
-    display:block;
-    padding: 10px 15px;
-    border-radius: 6px;
+    display: block;
+    border-radius: 0px;
+    padding: 10px 20px 10px 40px;
 }
 
-ul li a:hover{
-    background: aquamarine;
-
-    
+ul li a:hover {
+    background: rgb(38, 5, 128);
 }
-ul li a.active{
-    background: aquamarine;
+
+ul li a.active {
+    background: #044a68;
 }
 
 .logo{
@@ -64,4 +62,28 @@ ul li a.active{
 .main{
     display: flex;
     margin-left: 300px;
+    font-family: 'Poppins', sans-serif;
 }
+
+.mdb-table td {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9rem; /* Adjust this size to make text smaller */
+  }
+
+  .custom-table {
+    border-radius: 5px !important; /* Rounded corners for the table */
+    overflow: hidden; /* Ensures rounded corners are applied to inner elements */
+  }
+  
+  /* .custom-table th, .custom-table td {
+    border-radius: 15px !important; 
+  }*/
+
+  .MDBBtn:active {
+    transform: scale(1) !important; /* Prevent scaling */
+    padding: 0.5rem 1rem !important; /* Adjust padding if needed */
+  }
+
+  .no-scale:active {
+    transform: scale(1) !important;
+  }

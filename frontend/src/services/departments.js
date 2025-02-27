@@ -30,6 +30,7 @@ export const createDepartment= async(newDepartment) =>{
 
 export const deleteDepartmentMain= async (deptId)=>{
     try{
+        console.log(deptId)
         const response= await axios.delete(`${API_BASE_URL}/departments/${deptId}/`,{
             headers:getAuthHeaders()
         })

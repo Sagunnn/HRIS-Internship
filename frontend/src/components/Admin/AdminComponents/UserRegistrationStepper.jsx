@@ -64,12 +64,24 @@ export default function UserRegistrationStepper() {
 
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      user: { ...prev.user, [name]: type === 'checkbox' ? checked : type === 'file' ? files[0] : value },
-      [name]: name in prev.user ? prev[name] : value,
-    }));
+    
+    console.log("Field being changed:", name, "New Value:", value);  // Log the field and its new value
+    
+    if (name in formData.user) {
+      setFormData((prev) => ({
+        ...prev,
+        user: { ...prev.user, [name]: type === 'checkbox' ? checked : type === 'file' ? files[0] : value },
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  
+    console.log("Updated formData:", formData);  // Log formData after change
   };
+  
 
   const handleSubmit = async () => {
     if (formData.user.password !== formData.user.confirm_password) {

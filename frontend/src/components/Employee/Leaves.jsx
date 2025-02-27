@@ -1,18 +1,35 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useLeaves from "../../services/useLeaves";
-import {applyLeave} from "../../services/leaveServices";
+import {applyLeave, fetchLeaves} from "../../services/leaveServices";
+import { LeaveRequests } from "./LeaveRequests";
+import LeaveRequestModal from "./LeaveRequestModal";
 function Leaves() {
   const leaveTypes=[
     'SICK',
     'CASUAL',
+    'UNPAID',
+    'PAID'
   ]
-  const { requestLeave, updateLeaveStatus, getAllLeaves } = useLeaves();
+  const [Leaves,setLeaves]=useState([])
   const [formData, setFormData]=useState({
     'leave_type': '',
     'start_date':'',
     'end_date':'',
     'reason':''
   })
+  useEffect(()=>{
+    const getLeaves=async ()=>{
+      try{
+        const data = await fetchLeaves()
+        setLeaves(data)
+        console.log(data)
+      }
+      catch(err){
+        console.log(err)
+      }
+    }
+    getLeaves()
+  },[])
 
   const handleChange = (e) => {
     setFormData({...formData, [e.target.name]:e.target.value})
@@ -85,6 +102,8 @@ function Leaves() {
             <p>No leave requests found.</p>
           )}
         </div> */}
+        <LeaveRequests leaves={Leaves}/>
+        <LeaveRequestModal/>
       </div>
   
   );

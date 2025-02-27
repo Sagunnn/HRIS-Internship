@@ -41,22 +41,20 @@ const Login = () => {
   return (
     <>
       <ToastContainer />
-      <div className="container vh-100 d-flex justify-content-center align-items-center">
+      <div className="container vh-100 vh-100 mx-auto d-flex justify-content-center align-items-center">
         <div className="card shadow-lg p-4" style={{ width: "350px" }}>
-          <h3 className="text-center text-primary fw-bold">Login</h3>
-          <p className="text-center text-muted">Enter your credentials</p>
-
+          <h3 className="text-center text-danger fw-bold">HRIS Login</h3>
           <form onSubmit={handleSubmit}>
-            <div className="mb-3">
+            {/* <div className="mb-3">
               <label className="form-label">Role</label>
               <select name="role" className="form-select">
                 <option value="Admin">Admin</option>
                 <option value="Employee">Employee</option>
               </select>
-            </div>
+            </div> */}
 
             <div className="mb-3">
-              <label className="form-label">Username</label>
+              <label className="form-label fw-bold">Username</label>
               <input
                 type="text"
                 className="form-control"
@@ -68,7 +66,7 @@ const Login = () => {
             </div>
 
             <div className="mb-3">
-              <label className="form-label">Password</label>
+              <label className="form-label bold fw-bold">Password</label>
               <input
                 type="password"
                 className="form-control"
@@ -79,17 +77,10 @@ const Login = () => {
               />
             </div>
 
-            <button className="btn btn-primary w-100" type="submit">
+            <button className="btn btn btn-danger w-100" type="submit">
               Login
             </button>
           </form>
-
-          <p className="text-center mt-3">
-            Don't have an account?{" "}
-            <a href="#" className="text-primary fw-bold">
-              Sign Up
-            </a>
-          </p>
         </div>
       </div>
     </>

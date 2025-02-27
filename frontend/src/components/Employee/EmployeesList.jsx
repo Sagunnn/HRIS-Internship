@@ -1,116 +1,72 @@
 import React from 'react';
 import { MDBBadge, MDBBtn, MDBTable, MDBTableHead, MDBTableBody } from 'mdb-react-ui-kit';
-
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { getAuthHeaders } from '../../services/authorization';
 
 const EmployeesList = () => {
-    return (
-      <MDBTable align='middle'>
-        <MDBTableHead>
-          <tr>
-            <th scope='col'>Name</th>
-            <th scope='col'>Department</th>
-            <th scope='col'>Email</th>
-            <th scope='col'>Phone no.</th>
-            <th scope='col'>Actions</th>
-          </tr>
-        </MDBTableHead>
-        <MDBTableBody>
-          <tr>
-            <td>
-              <div className='d-flex align-items-center'>
-                <img
-                  src='https://mdbootstrap.com/img/new/avatars/8.jpg'
-                  alt=''
-                  style={{ width: '45px', height: '45px' }}
-                  className='rounded-circle'
-                />
-                <div className='ms-3'>
-                  <p className='fw-bold mb-1'>John Doe</p>
-                  <p className='text-muted mb-0'>john.doe@gmail.com</p>
-                </div>
-              </div>
-            </td>
-            <td>
-              <p className='fw-normal mb-1'>Software engineer</p>
-              <p className='text-muted mb-0'>IT department</p>
-            </td>
-            <td>
-              <MDBBadge color='success' pill>
-                Active
-              </MDBBadge>
-            </td>
-            <td>Senior</td>
-            <td>
-              <MDBBtn color='link' rounded size='sm'>
-                Edit
-              </MDBBtn>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <div className='d-flex align-items-center'>
-                <img
-                  src='https://mdbootstrap.com/img/new/avatars/6.jpg'
-                  alt=''
-                  style={{ width: '45px', height: '45px' }}
-                  className='rounded-circle'
-                />
-                <div className='ms-3'>
-                  <p className='fw-bold mb-1'>Alex Ray</p>
-                  <p className='text-muted mb-0'>alex.ray@gmail.com</p>
-                </div>
-              </div>
-            </td>
-            <td>
-              <p className='fw-normal mb-1'>Consultant</p>
-              <p className='text-muted mb-0'>Finance</p>
-            </td>
-            <td>
-              <MDBBadge color='primary' pill>
-                Onboarding
-              </MDBBadge>
-            </td>
-            <td>Junior</td>
-            <td>
-              <MDBBtn color='link' rounded size='sm'>
-                Edit
-              </MDBBtn>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <div className='d-flex align-items-center'>
-                <img
-                  src='https://mdbootstrap.com/img/new/avatars/7.jpg'
-                  alt=''
-                  style={{ width: '45px', height: '45px' }}
-                  className='rounded-circle'
-                />
-                <div className='ms-3'>
-                  <p className='fw-bold mb-1'>Kate Hunington</p>
-                  <p className='text-muted mb-0'>kate.hunington@gmail.com</p>
-                </div>
-              </div>
-            </td>
-            <td>
-              <p className='fw-normal mb-1'>Designer</p>
-              <p className='text-muted mb-0'>UI/UX</p>
-            </td>
-            <td>
-              <MDBBadge color='warning' pill>
-                Awaiting
-              </MDBBadge>
-            </td>
-            <td>Senior</td>
-            <td>
-              <MDBBtn color='link' rounded size='sm'>
-                Edit
-              </MDBBtn>
-            </td>
-          </tr>
-        </MDBTableBody>
-      </MDBTable>
-    );
+  const [employees, setEmployees] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get('http://127.0.0.1:8000/api/v1/register-employee/list/', {
+        headers: getAuthHeaders(),
+      })
+      .then((response) => {
+        setEmployees(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching employee data:', error);
+      });
+  }, []);
+
+  return (
+    <div className="p-4">
+      <h2 className="mb-4 text-center text-primary">Employee List</h2>
+      {employees.length > 0 ? (
+        <MDBTable
+          align="middle"
+          hover
+          bordered
+          responsive
+          className="custom-table" // Apply custom class for more control
+        >
+          <MDBTableHead MDBTableHead className="bg-primary text-white rounded-top">
+            <tr>
+              <th scope="col"> &nbsp; Name</th>
+              <th scope="col">Username</th>
+              <th scope="col">Department</th>
+              <th scope="col">Email</th>
+              <th scope="col">Contact</th>
+              <th scope="col">Address</th>
+            </tr>
+          </MDBTableHead>
+          <MDBTableBody>
+            {employees.map((employee, index) => (
+              <tr key={index}>
+                <td>
+                  <div className="d-flex align-items-center">
+                    <div className="ms-3">
+                      <p className="fw-bold mb-1">
+                      {employee.first_name} {employee.middle_name} {employee.last_name}
+                      </p>
+                    </div>
+                  </div>
+                </td>
+                <td>{employee.user.username}</td>
+                <td>{employee.department}</td>
+                <td>{employee.user.email}</td>
+                <td>{employee.contact_number}</td>
+                <td>{employee.address}</td>
+              </tr>
+            ))}
+          </MDBTableBody>
+        </MDBTable>
+      ) : (
+        <p>Loading employees...</p>
+      )}
+    </div>
+  );
 }
 
 export default EmployeesList

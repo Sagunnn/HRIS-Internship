@@ -62,7 +62,6 @@ export default function CreateUserForm() {
               <MDBBtn color='secondary' onClick={toggleOpen}>
                 Close
               </MDBBtn>
-              <MDBBtn type='submit' form='employeeForm' onClick={toggleOpen}>Create</MDBBtn>
             </MDBModalFooter>
           </MDBModalContent>
         </MDBModalDialog>

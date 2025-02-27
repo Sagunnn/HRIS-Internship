@@ -16,8 +16,9 @@ import AdminNavbar from './components/Admin/AdminComponents/AdminNavbar.jsx';
 import UserProfile from './components/Employee/UserProfile.jsx';
 import EmployeesList from './components/Employee/EmployeesList.jsx';
 import Leaves from './components/Employee/Leaves.jsx';
-
+import LeaveApproval from './components/Admin/AdminComponents/LeaveApproval.jsx';
 import './main.css';
+import {LeaveRequests}from './components/Employee/LeaveRequests.jsx';
 
 const App = () => {
   const [sideNavbar, setSideNavbar] = useState(true);
@@ -49,6 +50,7 @@ const MainContent = ({ role, sideNavbar, toggleSideNavbar }) => {
           <header onClick={toggleSideNavbar}>
             <TbBurger size={35} />
           </header>
+          {console.log(role)}
           {role ? (
             role.toLowerCase() === "admin" ? <AdminNavbar /> : <SideNavbar prop={sideNavbar} />
           ) : null}
@@ -81,6 +83,7 @@ const MainContent = ({ role, sideNavbar, toggleSideNavbar }) => {
             path="/admin/dashboard"
             element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>}
           />
+          <Route path='/admin/leave_approval' element={<LeaveApproval/>}></Route>
           <Route
             path="/employee"
             element={<ProtectedRoute><EmployeeDashboard /></ProtectedRoute>}
