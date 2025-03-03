@@ -5,5 +5,6 @@ router = DefaultRouter()
 router.register(r'list', EmployeeListView)
 urlpatterns = [
     path('', EmployeeCreateView.as_view(), name='employee-register'),
-    path('',include(router.urls))
+    path('',include(router.urls)),
+    
 ]

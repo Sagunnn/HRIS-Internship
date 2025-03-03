@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { fetchDepartments, createDepartment, deleteDepartmentMain, editDepartmentMain } from '../services/departments';
-import { MDBTable, MDBTableHead, MDBTableBody, MDBBtn, MDBInput, MDBContainer } from 'mdb-react-ui-kit';
+import { MDBTable, MDBTableHead, MDBTableBody, MDBBtn, MDBInput, MDBContainer, MDBModal, MDBModalDialog, MDBModalContent, MDBModalHeader, MDBModalTitle, MDBModalBody, MDBModalFooter } from 'mdb-react-ui-kit';
+import { CreateDepartmentModal } from './CreateDepartmentModal';
+import { EditDepartmentModal } from './EditDepartmentModal';
 
 const Departments = () => {
   const [departmentData, setDepartmentData] = useState([]);
@@ -11,6 +13,7 @@ const Departments = () => {
   });
   const [showForm, setShowForm] = useState(false);
   const [editDepartmentForm, setEditDepartmentForm] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   useEffect(() => {
     getDepartments();
@@ -20,6 +23,7 @@ const Departments = () => {
     try {
       const data = await fetchDepartments();
       setDepartmentData(data);
+      console.log(data)
     } catch (err) {
       console.error('Error fetching department data:', err.response ? err.response.data : err.message);
     }
@@ -40,6 +44,7 @@ const Departments = () => {
 
   const editDepartment = (department) => {
     setEditDepartmentForm({ ...department });
+    setShowEditModal(true); // Show the edit modal
   };
 
   const handleInputChange = (e) => {
@@ -49,8 +54,9 @@ const Departments = () => {
 
   const handleSaveClick = async () => {
     try {
-      const updatedDepartment = await editDepartmentMain(editDepartmentForm.id, editDepartmentForm);
-      setDepartmentData(departmentData.map(dept => (dept.id === updatedDepartment.id ? updatedDepartment : dept))); // Update UI
+      const updatedDepartment = await editDepartmentMain(editDepartmentForm.department_id, editDepartmentForm);
+      setDepartmentData(departmentData.map(dept => (dept.department_id === updatedDepartment.department_id ? updatedDepartment : dept))); // Update UI
+      setShowEditModal(false); // Close modal after saving
       setEditDepartmentForm(null);
     } catch {
       console.error('Failed to update department');
@@ -67,6 +73,7 @@ const Departments = () => {
   };
 
   const handleCancelClick = () => {
+    setShowEditModal(false); // Close the modal without saving
     setEditDepartmentForm(null);
   };
 
@@ -93,15 +100,15 @@ const Departments = () => {
         <MDBTableBody>
           {departmentData.map((department) => (
             <tr key={department.department_id}>
-              {editDepartmentForm && editDepartmentForm.id === department.id ? (
+              {editDepartmentForm && editDepartmentForm.department_id === department.department_id ? (
                 // 🛠 Edit Mode
                 <>
                   <td><MDBInput onChange={handleInputChange} type="text" name="department_name" value={editDepartmentForm.department_name} /></td>
                   <td><MDBInput onChange={handleInputChange} type="text" name="department_id" value={editDepartmentForm.department_id} /></td>
                   <td><MDBInput onChange={handleInputChange} type="text" name="manager" value={editDepartmentForm.manager || ''} /></td>
                   <td>
-                    <MDBBtn color="success" size="sm" onClick={handleSaveClick}>Save</MDBBtn>
-                    <MDBBtn color="danger" size="sm" onClick={handleCancelClick}>Cancel</MDBBtn>
+                    <button className="btn btn-primary"  size="sm" onClick={handleSaveClick}>Save</button>
+                    <button className="btn btn-danger"  onClick={handleCancelClick}>Cancel</button>
                   </td>
                 </>
               ) : (
@@ -111,8 +118,10 @@ const Departments = () => {
                   <td>{department.department_id}</td>
                   <td>{department.manager || 'NULL'}</td>
                   <td>
-                    <button className="btn btn-primary" onClick={() => editDepartment(department)}>Edit</button>
-                    <button className="btn btn-danger" onClick={() => deleteDepartment(department.department_id)}>{console.log(department.department_id)}Delete</button>
+                    {/* <button className="btn btn-primary" onClick={() => editDepartment(department)}>Edit</button> */}
+                    <EditDepartmentModal departmentData={department}/>
+                    <button className="btn btn-danger" onClick={() => deleteDepartment(department.department_id)}>Delete</button>
+                    
                   </td>
                 </>
               )}
@@ -121,25 +130,46 @@ const Departments = () => {
         </MDBTableBody>
       </MDBTable>
 
-      <button
-        className="btn btn-primary"
-        onClick={() => setShowForm(!showForm)}
-      >
-        {console.log("Rendering button...")}
-        {!showForm ? 'Create Department' : 'Cancel'}
-        </button> 
+      {/* Edit Department Modal */}
+      <MDBModal show={showEditModal} setShow={setShowEditModal}>
+        <MDBModalDialog>
+          <MDBModalContent>
+            <MDBModalHeader>
+              <MDBModalTitle>Edit Department</MDBModalTitle>
+              <MDBBtn className="btn-close" color="none" onClick={handleCancelClick}></MDBBtn>
+            </MDBModalHeader>
+            <MDBModalBody>
+              <MDBInput
+                label="Department Name"
+                type="text"
+                name="department_name"
+                value={editDepartmentForm?.department_name || ''}
+                onChange={handleInputChange}
+              />
+              <MDBInput
+                label="Department ID"
+                type="text"
+                name="department_id"
+                value={editDepartmentForm?.department_id || ''}
+                onChange={handleInputChange}
+              />
+              <MDBInput
+                label="Manager"
+                type="text"
+                name="manager"
+                value={editDepartmentForm?.manager || ''}
+                onChange={handleInputChange}
+              />
+            </MDBModalBody>
+            <MDBModalFooter>
+              <button className="btn btn-primary"  onClick={handleCancelClick}>Cancel</button>
+              <button className="btn btn-danger"  onClick={handleSaveClick}>Save Changes</button>
+            </MDBModalFooter>
+          </MDBModalContent>
+        </MDBModalDialog>
+      </MDBModal>
 
-
-      {showForm && (
-        <form onSubmit={handleSubmit} className="mt-3">
-          <MDBInput label="Department Name" type="text" name="department_name" value={newDepartment.department_name} onChange={handleChange} className="mb-2" />
-          <MDBInput label="Department ID" type="text" name="department_id" value={newDepartment.department_id} onChange={handleChange} className="mb-2" />
-          <MDBInput label="Manager Name" type="text" name="manager" value={newDepartment.manager} onChange={handleChange} className="mb-2" />
-          <button className="btn btn-primary" type="submit" color="success">
-            Create
-          </button>
-        </form>
-      )}
+      <CreateDepartmentModal />
     </MDBContainer>
   );
 };

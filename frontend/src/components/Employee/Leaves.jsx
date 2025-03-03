@@ -46,46 +46,7 @@ function Leaves() {
         <h2 className="text-xl font-bold mb-4">Leave Requests</h2>
   
         {/* Leave Request Form */}
-        <form onSubmit={handleSubmit} className="mb-6">
-        <select
-          name="leave_type"
-          value={formData.leave_type}
-          onChange={handleChange}
-          required
-          className="border rounded p-2 w-full"
-        >
-          <option value="">Select Leave Type</option>
-          {leaveTypes.map((type) => (
-            <option key={type} value={type}>
-              {type}
-            </option>
-          ))}
-        </select>
-          <input
-            type="date"
-            name="start_date"
-            value={formData.start_date}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="date"
-            name="end_date"
-            value={formData.end_date}
-            onChange={handleChange}
-            required
-          />
-          <textarea
-            name="reason"
-            value={formData.reason}
-            onChange={handleChange}
-            placeholder="Reason"
-            className="border rounded p-2 my-2"
-            rows="3"
-            required
-          />
-          <button type="submit" className="bg-blue-600 text-white w-full">Submit Leave</button>
-        </form>
+        
   
         {/* Leave Requests Table */}
         {/* <div className="border rounded p-4">

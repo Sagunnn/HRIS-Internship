@@ -9,3 +9,5 @@ class Department(models.Model):
     
     def __str__(self):
         return f"{self.department_name}: ({self.department_id})"
+    
+    

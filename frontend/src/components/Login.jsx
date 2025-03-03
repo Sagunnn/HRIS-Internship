@@ -42,7 +42,7 @@ const Login = () => {
     <>
       <ToastContainer />
       <div className="container vh-100 vh-100 mx-auto d-flex justify-content-center align-items-center">
-        <div className="card shadow-lg p-4" style={{ width: "350px" }}>
+        <div className="card shadow-lg p-4" style={{ width: "450px", marginRight: "200px" }}>
           <h3 className="text-center text-danger fw-bold">HRIS Login</h3>
           <form onSubmit={handleSubmit}>
             {/* <div className="mb-3">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   MDBBtn,
   MDBModal,
@@ -11,26 +11,36 @@ import {
   MDBInput,
   MDBTextArea,
 } from 'mdb-react-ui-kit';
-import { applyLeave } from "../../services/leaveServices";
 
-export default function LeaveRequestModal() {
+import { fetchEmployees } from '../services/employeeServices';
+import { createDepartment } from '../services/departments';
+
+export function CreateDepartmentModal() {
   const [basicModal, setBasicModal] = useState(false);
+  const [Managers,setManagers]=useState([])
   const toggleOpen = () => setBasicModal(!basicModal);
 
   const [formData, setFormData] = useState({
-    leave_type: '',
-    start_date: '',
-    end_date: '',
-    reason: '',
+    department_id: '',
+    department_name: '',
+    manager: '',
   });
-
-  const leaveTypes = [
-    'SICK',
-    'CASUAL',
-    'UNPAID',
-    'PAID',
-  ];
-
+  
+  useEffect(()=>{
+    const getManagers= async () =>{
+        try{
+            const data= await fetchEmployees()
+            const filteredManager= data.filter((employee)=> employee.user.role=='Manager')
+            console.log(filteredManager)
+            setManagers(filteredManager)
+        }
+        catch(err){
+            console.log(err)
+        }
+        
+    }
+    getManagers()
+  }, [])
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -38,55 +48,57 @@ export default function LeaveRequestModal() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(formData);
-    applyLeave(formData);
+    createDepartment(formData);
+    console.log(formData)
     setBasicModal(false); // Close the modal after successful submission
-    setFormData({ leave_type: '', start_date: '', end_date: '', reason: '' });
-    window.location.reload()
+    setFormData({ department_id: '', department_name: '', manager: ''});
+    // window.location.reload()
   };
 
   return (
     <>
       <MDBBtn onClick={toggleOpen} color="primary">
-        Request Leave
+        Create Department
       </MDBBtn>
 
       <MDBModal open={basicModal} onClose={() => setBasicModal(false)} tabIndex="-1">
         <MDBModalDialog size="lg">
-          <MDBModalContent className="p-4" style={{ maxWidth: '600px', width: '100%',marginLeft: '170px',marginTop:'50px' }}>
+          <MDBModalContent className="p-4" style={{ maxWidth: '600px', width: '100%' }}>
             <MDBModalHeader>
-              <MDBModalTitle>Leave Request Form</MDBModalTitle>
+              <MDBModalTitle>Create Department</MDBModalTitle>
               <MDBBtn className="btn-close" color="none" onClick={toggleOpen}></MDBBtn>
             </MDBModalHeader>
 
             <MDBModalBody>
               <form onSubmit={handleSubmit} className="d-flex flex-column align-items-center">
-                {/* Leave Type Dropdown */}
+                {/* Manager Dropdown */}
                 <div className="mb-4 w-100">
-                  <label htmlFor="leave_type">Select Leave Type</label>
+                  <label htmlFor="manager">Select Manager</label>
                   <select
-                    id="leave_type"
-                    name="leave_type"
-                    value={formData.leave_type}
+                    id="manager"
+                    name="manager"
+                    value={formData.manager}
                     onChange={handleChange}
                     required
                     className="form-control"
                   >
-                    <option value="">Select Leave Type</option>
-                    {leaveTypes.map((type) => (
-                      <option key={type} value={type}>
-                        {type}
+                    <option value="">Select Manager</option>
+                    {Managers.map((manager) => (
+                      <option key={manager.id} value={manager.id}>
+                        {manager.first_name} {manager.last_name}: <b>{manager.department}</b>
                       </option>
+                      
                     ))}
                   </select>
                 </div>
 
                 {/* Start Date */}
                 <div className="mb-4 w-100">
-                  <label htmlFor="start_date">Start Date</label>
+                  <label htmlFor="department_name">Department Name</label>
                   <MDBInput
-                    type="date"
-                    name="start_date"
-                    value={formData.start_date}
+                    type="text"
+                    name="department_name"
+                    value={formData.department_name}
                     onChange={handleChange}
                     className="mb-4"
                     required
@@ -95,34 +107,21 @@ export default function LeaveRequestModal() {
 
                 {/* End Date */}
                 <div className="mb-4 w-100">
-                  <label htmlFor="end_date">End Date</label>
+                  <label htmlFor="department_id">Department ID</label>
                   <MDBInput
-                    type="date"
-                    name="end_date"
-                    value={formData.end_date}
+                    type="text"
+                    name="department_id"
+                    value={formData.department_id}
                     onChange={handleChange}
                     className="mb-4"
                     required
                   />
                 </div>
 
-                {/* Reason */}
-                <div className="mb-4 w-100">
-                  <label htmlFor="reason">Leave Reason</label>
-                  <MDBTextArea
-                    name="reason"
-                    value={formData.reason}
-                    onChange={handleChange}
-                    placeholder="Reason for leave"
-                    rows="4"
-                    className="mb-4"
-                    required
-                  />
-                </div>
-
+                
                 {/* Submit Button */}
                 <MDBBtn type="submit" color="secondary" className="w-100">
-                  Submit Leave
+                  Create Department
                 </MDBBtn>
               </form>
             </MDBModalBody>

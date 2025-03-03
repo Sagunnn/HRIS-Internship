@@ -48,13 +48,13 @@ const EmployeesList = () => {
                   <div className="d-flex align-items-center">
                     <div className="ms-3">
                       <p className="fw-bold mb-1">
-                      {employee.first_name} {employee.middle_name} {employee.last_name}
+                      {employee.first_name} {employee.last_name}
                       </p>
                     </div>
                   </div>
                 </td>
                 <td>{employee.user.username}</td>
-                <td>{employee.department}</td>
+                <td>{employee.department} </td>
                 <td>{employee.user.email}</td>
                 <td>{employee.contact_number}</td>
                 <td>{employee.address}</td>

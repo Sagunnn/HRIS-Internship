@@ -5,12 +5,10 @@ import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import StepContent from '@mui/material/StepContent';
 import Button from '@mui/material/Button';
-import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
-import Checkbox from '@mui/material/Checkbox';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import MenuItem from '@mui/material/MenuItem';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
 import { fetchDepartments } from '../../../services/departments';
 import { createEmployee } from '../../../services/employeeServices';
 
@@ -33,6 +31,7 @@ const steps = [
     ] },
   { label: 'Profile Picture & Role', fields: [
       { name: 'profile_picture', label: 'Profile Picture', type: 'file' },
+      { name: 'role', label: 'Role', type: 'select' },
       { name: 'is_staff', label: 'Is Staff', type: 'checkbox' },
     ] },
 ];
@@ -41,7 +40,7 @@ export default function UserRegistrationStepper() {
   const [activeStep, setActiveStep] = useState(0);
   const [departments, setDepartments] = useState([]);
   const [formData, setFormData] = useState({
-    user: { username: '', email: '', profile_picture: null, is_staff: false, password: '', confirm_password: '' },
+    user: { username: '', email: '', profile_picture: null, role: '', is_staff: false, password: '', confirm_password: '' },
     department: '',
     contact_number: '',
     address: '',
@@ -50,53 +49,38 @@ export default function UserRegistrationStepper() {
     last_name: '',
   });
 
+  const roles = ['Admin', 'Employee', 'Manager'];
+
   useEffect(() => {
-    const getDepartment = async () => {
+    async function getDepartments() {
       try {
         const data = await fetchDepartments();
         setDepartments(data);
       } catch (error) {
         console.error('Error fetching departments:', error);
       }
-    };
-    getDepartment();
+    }
+    getDepartments();
   }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
-    
-    console.log("Field being changed:", name, "New Value:", value);  // Log the field and its new value
-    
-    if (name in formData.user) {
-      setFormData((prev) => ({
-        ...prev,
-        user: { ...prev.user, [name]: type === 'checkbox' ? checked : type === 'file' ? files[0] : value },
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
-  
-    console.log("Updated formData:", formData);  // Log formData after change
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === 'file' ? files[0] : type === 'checkbox' ? checked : value,
+      user: name in prev.user ? { ...prev.user, [name]: type === 'checkbox' ? checked : value } : prev.user
+    }));
   };
-  
 
   const handleSubmit = async () => {
     if (formData.user.password !== formData.user.confirm_password) {
       alert("Passwords do not match!");
       return;
     }
-  
+
     const dataToSend = {
-      user: {
-        username: formData.user.username,
-        email: formData.user.email,
-        is_staff: formData.user.is_staff,
-        password: formData.user.password,
-        confirm_password: formData.user.confirm_password,
-      },
+      user: { ...formData.user },
       department: formData.department,
       contact_number: formData.contact_number,
       address: formData.address,
@@ -104,34 +88,18 @@ export default function UserRegistrationStepper() {
       middle_name: formData.middle_name || '',
       last_name: formData.last_name,
     };
-  
+
     console.log("📌 JSON Payload:", JSON.stringify(dataToSend, null, 2));
-  
+
     try {
       const response = await createEmployee(dataToSend);
-      console.log("✅ Success:", response.data);
       alert("User registered successfully!");
+      console.log("✅ Success:", response.data);
     } catch (error) {
       console.error("❌ Error submitting form:", error);
-  
-      if (error.response) {
-        // Handle 400, 403, or other backend errors
-        console.log("🔍 Response Data:", error.response.data);
-        console.log("🔍 Response Status:", error.response.status);
-        alert(`Error: ${JSON.stringify(error.response.data)}`);
-      } else if (error.request) {
-        // Request was made but no response received
-        console.error("🚨 No response received:", error.request);
-        alert("Error: No response from server. Check if backend is running.");
-      } else {
-        // Any other errors (network issue, CORS, etc.)
-        console.error("🛑 Request setup error:", error.message);
-        alert(`Error: ${error.message}`);
-      }
+      alert(`Error: ${error.response ? JSON.stringify(error.response.data) : error.message}`);
     }
   };
-    
-  
 
   return (
     <Box sx={{ maxWidth: 600, margin: 'auto', mt: 4 }}>
@@ -140,41 +108,49 @@ export default function UserRegistrationStepper() {
           <Step key={step.label}>
             <StepLabel>{step.label}</StepLabel>
             <StepContent>
-            {step.fields.map((field) => (
-              field.type === 'select' ? (
-                <TextField
-                  key={field.name}
-                  select
-                  fullWidth
-                  margin="normal"
-                  name={field.name}
-                  label={field.label}
-                  value={formData.department}
-                  onChange={handleChange}
-                >
-                  {departments.length > 0 ? (
-                    departments.map((dept) => (
-                      <MenuItem key={dept.id} value={dept.department_name}>
-                        {dept.department_name}
-                      </MenuItem>
-                    ))
-                  ) : (
-                    <MenuItem disabled>No departments available</MenuItem>
-                  )}
-                </TextField>
-              ) : (
-                <TextField
-                  key={field.name}
-                  fullWidth
-                  margin="normal"
-                  name={field.name}
-                  label={field.label}
-                  type={field.type}
-                  value={formData.user[field.name] || formData[field.name] || ''}
-                  onChange={handleChange}
-                />
-              )
-            ))}
+              {step.fields.map((field) => (
+                field.type === 'select' ? (
+                  <TextField
+                    key={field.name}
+                    select
+                    fullWidth
+                    margin="normal"
+                    name={field.name}
+                    label={field.label}
+                    value={field.name === 'department' ? formData.department : formData.user.role}
+                    onChange={handleChange}
+                  >
+                    {field.name === 'department' ? (
+                      departments.length > 0 ? (
+                        departments.map((dept) => (
+                          <MenuItem key={dept.id} value={dept.department_name}>{dept.department_name}</MenuItem>
+                        ))
+                      ) : <MenuItem disabled>No departments available</MenuItem>
+                    ) : (
+                      roles.map((role) => (
+                        <MenuItem key={role} value={role}>{role}</MenuItem>
+                      ))
+                    )}
+                  </TextField>
+                ) : field.type === 'checkbox' ? (
+                  <FormControlLabel
+                    key={field.name}
+                    control={<Checkbox checked={formData.user.is_staff} onChange={handleChange} name={field.name} />}
+                    label={field.label}
+                  />
+                ) : (
+                  <TextField
+                    key={field.name}
+                    fullWidth
+                    margin="normal"
+                    name={field.name}
+                    label={field.label}
+                    type={field.type}
+                    value={formData.user[field.name] || formData[field.name] || ''}
+                    onChange={handleChange}
+                  />
+                )
+              ))}
 
               <Box sx={{ mb: 2 }}>
                 <Button variant="contained" onClick={index === steps.length - 1 ? handleSubmit : () => setActiveStep(prev => prev + 1)}>

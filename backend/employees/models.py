@@ -9,3 +9,6 @@ class Employee(models.Model):
     contact_number=models.CharField(max_length=15, null=True)
     department=models.ForeignKey('departments.Department',to_field='department_id',on_delete=models.SET_NULL, null=True, blank= True, related_name='employee')
     user=models.OneToOneField('authentication.User',on_delete=models.CASCADE)
+
+    def get_full_name(self):
+        return f"{self.first_name} {self.middle_name} {self.last_name}".strip()

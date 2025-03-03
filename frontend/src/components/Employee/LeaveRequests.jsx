@@ -7,8 +7,6 @@ export const LeaveRequests = ({ leaves }) => {
     <MDBTable align="middle">
       <MDBTableHead>
         <tr>
-          <th scope="col">Name</th>
-          <th scope="col">Email</th>
           <th scope="col">Leave Type</th>
           <th scope="col">Start Date</th>
           <th scope="col">End Date</th>
@@ -21,20 +19,6 @@ export const LeaveRequests = ({ leaves }) => {
         {(leaves?.length > 0) ? (
           leaves.map((leave) => (
             <tr key={leave.id}>
-              <td>
-                <div className="d-flex align-items-center">
-                  <img
-                    src={leave.userImage || 'https://mdbootstrap.com/img/new/avatars/8.jpg'} // Default image if none provided
-                    alt=""
-                    style={{ width: '45px', height: '45px' }}
-                    className="rounded-circle"
-                  />
-                  <div className="ms-3">
-                    <p className="fw-bold mb-1">{leave.userName}</p>
-                  </div>
-                </div>
-              </td>
-              <td>{leave.userEmail}</td>
               <td>{leave.leave_type}</td>
               <td>{new Date(leave.start_date).toLocaleDateString()}</td>
               <td>{new Date(leave.end_date).toLocaleDateString()}</td>

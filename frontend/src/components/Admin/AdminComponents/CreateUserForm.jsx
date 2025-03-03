@@ -40,7 +40,7 @@ export default function CreateUserForm() {
     <>
       <MDBBtn onClick={toggleOpen}>Add Employee</MDBBtn>
       <MDBModal open={basicModal} onClose={() => setBasicModal(false)} tabIndex='-1'>
-        <MDBModalDialog>
+      <MDBModalDialog style={{ marginLeft: "500px" }}>
           <MDBModalContent>
             <MDBModalHeader>
               <MDBModalTitle>Employee Registration</MDBModalTitle>
