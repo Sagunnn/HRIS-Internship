@@ -5,7 +5,7 @@ import { loginUser } from "../services/authorization";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-toastify/dist/ReactToastify.css";
 // import "../styles/login.css"; // Optional: Add custom styles
-
+import grafiLogo from "../assets/grafiLogo.png"
 const Login = () => {
   const navigate = useNavigate();
   const [loginForm, setLoginForm] = useState({
@@ -41,8 +41,11 @@ const Login = () => {
   return (
     <>
       <ToastContainer />
+      
+      
       <div className="container vh-100 vh-100 mx-auto d-flex justify-content-center align-items-center">
         <div className="card shadow-lg p-4" style={{ width: "450px", marginRight: "200px" }}>
+        <img src={grafiLogo} alt="" style={{ width: "140px", height: "auto" }}/><br></br>
           <h3 className="text-center text-danger fw-bold">HRIS Login</h3>
           <form onSubmit={handleSubmit}>
             {/* <div className="mb-3">
