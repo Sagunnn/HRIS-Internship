@@ -34,6 +34,7 @@ export default function CreateUserForm() {
       }
   
       const handleFileChange=(e)=>{
+        e.preventDefault()
         setFormData({...formData,[e.target.name]:e.target.files[0]})
       }
   return (

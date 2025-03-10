@@ -9,7 +9,9 @@ class DepartmentSerializer(serializers.ModelSerializer):
     
 #     # Add a 'manager_name' field that fetches the full name of the manager
 #     manager_name = serializers.CharField(source='manager.get_full_name', read_only=True)
+    manager_name = serializers.CharField(source='get_manager_name', read_only=True)
 
     class Meta:
         model = Department
-        fields = ['department_id', 'department_name', 'manager']
+        fields = ['department_id', 'department_name', 'manager','manager_name']
+        

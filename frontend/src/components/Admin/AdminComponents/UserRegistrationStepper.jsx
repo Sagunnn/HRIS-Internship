@@ -40,7 +40,15 @@ export default function UserRegistrationStepper() {
   const [activeStep, setActiveStep] = useState(0);
   const [departments, setDepartments] = useState([]);
   const [formData, setFormData] = useState({
-    user: { username: '', email: '', profile_picture: null, role: '', is_staff: false, password: '', confirm_password: '' },
+    user: { 
+      username: '', 
+      email: '', 
+      profile_picture: null, 
+      role: '', 
+      is_staff: false, 
+      password: '', 
+      confirm_password: '' 
+    },
     department: '',
     contact_number: '',
     address: '',
@@ -64,13 +72,28 @@ export default function UserRegistrationStepper() {
   }, []);
 
   const handleChange = (e) => {
+    e.preventDefault();
     const { name, value, type, checked, files } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === 'file' ? files[0] : type === 'checkbox' ? checked : value,
-      user: name in prev.user ? { ...prev.user, [name]: type === 'checkbox' ? checked : value } : prev.user
-    }));
+    
+    setFormData((prev) => {
+      if (name === 'profile_picture' && type === 'file') {
+        console.log("Profile picture file:", files[0]); // Debugging file selection
+        return {
+          ...prev,
+          user: { ...prev.user, profile_picture: files[0] },
+        };
+      } else if (name in prev.user) {
+        return {
+          ...prev,
+          user: { ...prev.user, [name]: type === 'checkbox' ? checked : value },
+        };
+      } else {
+        return {
+          ...prev,
+          [name]: value,
+        };
+      }
+    });
   };
 
   const handleSubmit = async () => {
@@ -79,17 +102,33 @@ export default function UserRegistrationStepper() {
       return;
     }
 
-    const dataToSend = {
-      user: { ...formData.user },
-      department: formData.department,
-      contact_number: formData.contact_number,
-      address: formData.address,
-      first_name: formData.first_name,
-      middle_name: formData.middle_name || '',
-      last_name: formData.last_name,
-    };
+    const dataToSend = new FormData();
 
-    console.log("📌 JSON Payload:", JSON.stringify(dataToSend, null, 2));
+    // Append user fields
+    dataToSend.append("user.username", formData.user.username);
+    dataToSend.append("user.email", formData.user.email);
+    dataToSend.append("user.password", formData.user.password);
+    dataToSend.append("user.confirm_password", formData.user.confirm_password);
+    dataToSend.append("user.role", formData.user.role);
+    dataToSend.append("user.is_staff", formData.user.is_staff);
+
+    // Append profile picture if it exists and is a valid file
+    if (formData.user.profile_picture) {
+      dataToSend.append("user.profile_picture", formData.user.profile_picture);
+    }
+
+    // Append other employee details
+    dataToSend.append("department", formData.department);
+    dataToSend.append("contact_number", formData.contact_number);
+    dataToSend.append("address", formData.address);
+    dataToSend.append("first_name", formData.first_name);
+    dataToSend.append("middle_name", formData.middle_name || '');
+    dataToSend.append("last_name", formData.last_name);
+
+    // Debugging: Print FormData contents
+    for (let pair of dataToSend.entries()) {
+      console.log(`${pair[0]}:`, pair[1]);
+    }
 
     try {
       const response = await createEmployee(dataToSend);
@@ -138,6 +177,8 @@ export default function UserRegistrationStepper() {
                     control={<Checkbox checked={formData.user.is_staff} onChange={handleChange} name={field.name} />}
                     label={field.label}
                   />
+                ) : field.type === 'file' ? (
+                  <input key={field.name} type="file" name={field.name} onChange={handleChange} />
                 ) : (
                   <TextField
                     key={field.name}

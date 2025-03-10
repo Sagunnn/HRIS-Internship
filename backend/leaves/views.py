@@ -37,3 +37,24 @@ class UserLeaveApprovalView(viewsets.ModelViewSet):
     queryset=Leave.objects.all()
     permission_classes=[IsAdminUser]
     serializer_class=UserLeaveApprovalSerializer
+
+class UserLeaveUpdateView(generics.UpdateAPIView):
+    queryset = Leave.objects.all()
+    serializer_class = UserLeaveSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        """
+        Ensure the leave record belongs to the authenticated user.
+        """
+        leave = super().get_object()
+        if leave.employee.user != self.request.user:
+            raise PermissionDenied('You do not have permission to update this leave record.')
+        return leave
+
+    def perform_update(self, serializer):
+        """
+        Save the updated leave record.
+        """
+        # You can add additional logic here if needed before saving
+        serializer.save()

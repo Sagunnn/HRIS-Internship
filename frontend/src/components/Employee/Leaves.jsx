@@ -42,8 +42,7 @@ function Leaves() {
   // const leaveRequests = getAllLeaves();
 
   return (
-      <div className="p-6">
-        <h2 className="text-xl font-bold mb-4">Leave Requests</h2>
+      <div>
   
         {/* Leave Request Form */}
         
@@ -64,7 +63,7 @@ function Leaves() {
           )}
         </div> */}
         <LeaveRequests leaves={Leaves}/>
-        <LeaveRequestModal/>
+        
       </div>
   
   );

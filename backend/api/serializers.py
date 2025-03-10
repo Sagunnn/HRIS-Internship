@@ -21,7 +21,7 @@ class UserSerializer(serializers.ModelSerializer):
 class UserCreationSerializer(serializers.ModelSerializer):
     password=serializers.CharField(write_only=True)
     confirm_password=serializers.CharField(write_only=True)
-    
+    profile_picture = serializers.ImageField(required=False)
     class Meta:
         model=User
         fields=['username','email','profile_picture','role','is_staff','password','confirm_password']
@@ -31,10 +31,19 @@ class UserCreationSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Password do not match')
         return attr
     
-    def create(self,validated_data):
-        password=validated_data.pop('password')
+    def create(self, validated_data):
+        password = validated_data.pop('password')
         validated_data.pop('confirm_password')
-        return User.objects.create_user(password=password,**validated_data)
+
+        profile_picture = validated_data.pop('profile_picture', None)  # Extract profile picture
+
+        user = User.objects.create_user(password=password, **validated_data)
+
+        if profile_picture:
+            user.profile_picture = profile_picture  # Explicitly assign profile picture
+            user.save()  # Save user again to store image
+        return user
+
     
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod

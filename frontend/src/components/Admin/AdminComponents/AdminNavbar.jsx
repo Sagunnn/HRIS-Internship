@@ -24,8 +24,9 @@ const AdminNavbar = (prop) => {
       <img src={logo} alt="Logo" className="logo" />
       <ul>
         <li><Link to="/admin" className={isActive('/admin') ? 'active' : ''}>Home</Link></li>
+        
+        <li><Link to="/admin/user_registration" className={isActive('/admin/user_registration') ? 'active' : ''}>Employees</Link></li>
         <li><Link to="/admin/users" className={isActive('/admin/users') ? 'active' : ''}>Users</Link></li>
-        <li><Link to="/admin/user_registration" className={isActive('/admin/user_registration') ? 'active' : ''}>User Registration</Link></li>
         <li><Link to="/admin/departments" className={isActive('/admin/departments') ? 'active' : ''}>Departments</Link></li>
         <li><Link to="/admin/leave_approval" className={isActive('/admin/leave_approval') ? 'active' : ''}>Leave Requests</Link></li>
         <li><Link to="/login" onClick={handleLogout}>Logout</Link></li>

@@ -116,7 +116,7 @@ const Departments = () => {
                 <>
                   <td>{department.department_name}</td>
                   <td>{department.department_id}</td>
-                  <td>{department.manager || 'NULL'}</td>
+                  <td>{department.manager_name || 'NULL'}</td>
                   <td>
                     {/* <button className="btn btn-primary" onClick={() => editDepartment(department)}>Edit</button> */}
                     <EditDepartmentModal departmentData={department}/>

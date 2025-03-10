@@ -5,7 +5,8 @@ from .views import (
     LeaveRetrieveUpdateDestroyView,
     UserLeaveListCreateView,
     UserLeaveRetrieveView,
-    UserLeaveApprovalView  # This is a ViewSet
+    UserLeaveApprovalView,
+    UserLeaveUpdateView# This is a ViewSet
 )
 
 # ✅ Define a router for the ViewSet
@@ -20,6 +21,7 @@ urlpatterns = [
     # User Leave Management
     path('user-leaves/', UserLeaveListCreateView.as_view(), name='user-leave-list-create'),
     path('user-leaves/<int:pk>/', UserLeaveRetrieveView.as_view(), name='user-leave-retrieve'),
+    path('user-leaves/update/<int:pk>/', UserLeaveUpdateView.as_view(), name='leave-update'),
 
     # ✅ Include router URLs for ViewSets
     path('', include(router.urls)),

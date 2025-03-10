@@ -40,7 +40,18 @@ export const pendingApprovals= async () =>{
         console.log(err)
     }
 }
-
+export const updateLeaveDetails= async(leaveId,data)=>{
+    console.log('here',data)
+    try{
+        const response= await axios.patch(`${BASE_URL}/leaves/user-leaves/update/${leaveId}/`,data,{
+            headers: getAuthHeaders()
+        })
+        return response.data
+    }
+    catch(err){
+        console.log(err)
+    }
+}
 export const updateLeaveStatus = async (leaveId,status) =>{
     try{
         const response= await axios.patch(`${BASE_URL}/leaves/leave-approval/${leaveId}/`,{status},{

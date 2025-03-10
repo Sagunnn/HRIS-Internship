@@ -10,4 +10,9 @@ class Department(models.Model):
     def __str__(self):
         return f"{self.department_name}: ({self.department_id})"
     
-    
+    def get_manager_name(self):
+        # Check if the manager exists before accessing attributes
+        if self.manager:
+            return f"{self.manager.first_name} {self.manager.last_name}"
+        else:
+            return "No manager assigned"

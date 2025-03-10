@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { pendingApprovals, updateLeaveStatus } from '../../../services/leaveServices';
+import LeaveRequestModal from '../../Employee/LeaveRequestModal';
+import HandleLeaveRequestModal from './HandleLeaveRequestModal';
 
 const LeaveApproval = () => {
     const [leaves, setLeaves] = useState([]);
@@ -106,22 +108,7 @@ const LeaveApproval = () => {
                                         </span>
                                     </td>
                                     <td>
-                                        {leave.status === 'PENDING' && (
-                                            <>
-                                                <button
-                                                    className="btn btn-outline-success btn-sm me-2 px-3 fw-bold"
-                                                    onClick={() => handleApproval(leave.id, "APPROVED")}
-                                                >
-                                                    ✔ Approve
-                                                </button>
-                                                <button
-                                                    className="btn btn-outline-danger btn-sm px-3 fw-bold"
-                                                    onClick={() => handleApproval(leave.id, "REJECTED")}
-                                                >
-                                                    ✖ Reject
-                                                </button>
-                                            </>
-                                        )}
+                                    <HandleLeaveRequestModal leave={leave}/>
                                     </td>
                                 </tr>
                             ))
@@ -132,6 +119,7 @@ const LeaveApproval = () => {
                         )}
                     </tbody>
                 </table>
+                <LeaveRequestModal/>
             </div>
         </div>
     );

@@ -14,6 +14,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
     user = UserCreationSerializer()
     department = serializers.CharField()  # Accepting department name as a string
     # contact_number = PhoneNumberField()  # Correctly handle the contact number field
+    middle_name=serializers.CharField(required=False)
 
     class Meta:
         model = Employee

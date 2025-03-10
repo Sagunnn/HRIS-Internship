@@ -36,4 +36,12 @@ export const getAuthHeaders = () => {
   };
 };
 
+export const getRegistrationAuthHeaders = () => {
+  const token = localStorage.getItem("access_token");
+  return {
+    Authorization: `Bearer ${token}`,
+    // "Content-Type": "multipart/form-data",
+  };
+};
+
 

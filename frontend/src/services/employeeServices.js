@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getAuthHeaders } from "./authorization";
+import { getAuthHeaders,getRegistrationAuthHeaders } from "./authorization";
 const API_BASE_URL = "http://127.0.0.1:8000/api/v1";
 
 export const fetchEmployees= async () =>{
@@ -20,7 +20,7 @@ export const createEmployee= async(formData) =>{
     const token= localStorage.getItem('access_token')
     try{
         const response= await axios.post(`${API_BASE_URL}/register-employee/`,formData,{
-            headers:getAuthHeaders()
+            headers:getRegistrationAuthHeaders(),
         })
         window.location.reload();
     }
