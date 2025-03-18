@@ -12,6 +12,8 @@ export const loginUser = async (loginData) => {
     const deCodedToken=jwtDecode(access)
     
     localStorage.setItem("role",deCodedToken.role)
+    localStorage.setItem("fullname",deCodedToken.full_name)
+    console.log("hello",deCodedToken.full_name)
      // Store tokens in localStorage
      localStorage.setItem("access_token", access);
      localStorage.setItem("refresh_token", refresh);

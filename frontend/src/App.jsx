@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { TbBurger } from "react-icons/tb";
 
 import Login from './components/Login';
 import HomePage from './pages/HomePage.jsx';
@@ -18,28 +17,36 @@ import EmployeesList from './components/Employee/EmployeesList.jsx';
 import Leaves from './components/Employee/Leaves.jsx';
 import LeaveApproval from './components/Admin/AdminComponents/LeaveApproval.jsx';
 import './main.css';
-import {LeaveRequests}from './components/Employee/LeaveRequests.jsx';
+import {LeaveRequests} from './components/Employee/LeaveRequests.jsx';
 
 const App = () => {
   const [sideNavbar, setSideNavbar] = useState(true);
   const [role, setRole] = useState(localStorage.getItem("role") || "");
-  
+  const [fullName, setFullName] = useState(localStorage.getItem('full_name') || '');
+
   const toggleSideNavbar = () => {
     setSideNavbar(!sideNavbar);
   };
 
   useEffect(() => {
-    setRole(localStorage.getItem('role'));
+    console.log("hello123",localStorage.getItem('fullname'),"123")
+    const roleFromStorage = localStorage.getItem('role');
+    const fullNameFromStorage = localStorage.getItem('fullname');
+    setRole(roleFromStorage);
+    setFullName(fullNameFromStorage);
+
+    console.log("here", roleFromStorage);
+    console.log("here", fullNameFromStorage);
   }, []);
 
   return (
     <Router>
-      <MainContent role={role} sideNavbar={sideNavbar} toggleSideNavbar={toggleSideNavbar} />
+      <MainContent role={role} fullName={fullName} sideNavbar={sideNavbar} toggleSideNavbar={toggleSideNavbar} />
     </Router>
   );
 };
 
-const MainContent = ({ role, sideNavbar, toggleSideNavbar }) => {
+const MainContent = ({ role, fullName, sideNavbar, toggleSideNavbar }) => {
   const location = useLocation();
   const isLoginPage = location.pathname === "/login";
 
@@ -48,11 +55,21 @@ const MainContent = ({ role, sideNavbar, toggleSideNavbar }) => {
       {!isLoginPage && (
         <>
           <header onClick={toggleSideNavbar}>
-            <TbBurger size={35} />
+            <div className="header-content">
+              {fullName ? (
+                <span>Welcome, {fullName}</span>
+              ) : (
+                <span>Welcome, User</span> // Fallback text if no full name
+              )}
+            </div>
           </header>
-          {console.log(role)}
+          
           {role ? (
-            role.toLowerCase() === "admin" ? <AdminNavbar /> : <SideNavbar prop={sideNavbar} />
+            role.toLowerCase() === "admin" ? (
+              <AdminNavbar />
+            ) : (
+              <SideNavbar key={sideNavbar} prop={sideNavbar} />
+            )
           ) : null}
         </>
       )}
@@ -90,6 +107,7 @@ const MainContent = ({ role, sideNavbar, toggleSideNavbar }) => {
           />
           <Route path='/employee/profile' element={<UserProfile />} />
           <Route path='/employee/employee_list' element={<EmployeesList />} />
+          <Route path='/employee/departments' element={<Departments />} />
           <Route path='/employee/leave_requests' element={<Leaves />} />
         </Routes>
       </div>

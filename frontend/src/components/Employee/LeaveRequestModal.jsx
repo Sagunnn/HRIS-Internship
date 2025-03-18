@@ -41,7 +41,7 @@ export default function LeaveRequestModal() {
     applyLeave(formData);
     setBasicModal(false); // Close the modal after successful submission
     setFormData({ leave_type: '', start_date: '', end_date: '', reason: '' });
-    window.location.reload()
+    
   };
 
   return (

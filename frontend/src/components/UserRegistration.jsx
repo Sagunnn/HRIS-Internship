@@ -1,15 +1,18 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { getAuthHeaders } from '../services/authorization';
 import { MDBBtn, MDBTable, MDBTableHead, MDBTableBody, MDBInput } from 'mdb-react-ui-kit';
 import CreateUserForm from './Admin/AdminComponents/CreateUserForm';
+import EditEmployeeModal from './EditEmployeeModal';
+import { EditDepartmentModal } from './EditDepartmentModal';
 
 const UserRegistration = () => {
   const [employees, setEmployees] = useState([]);
   const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [filterQuery, setFilterQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1); // Current page
+  const [employeesPerPage] = useState(5); // Employees per page
   const [rowHeight, setRowHeight] = useState(50); // Default row height
-
 
   useEffect(() => {
     axios
@@ -38,10 +41,22 @@ const UserRegistration = () => {
       (employee.department ? employee.department.toLowerCase() : '').includes(query)
     );
     setFilteredEmployees(filtered);
+    setCurrentPage(1); // Reset to page 1 when the filter changes
   };
 
+  // Pagination logic
+  const indexOfLastEmployee = currentPage * employeesPerPage;
+  const indexOfFirstEmployee = indexOfLastEmployee - employeesPerPage;
+  const currentEmployees = filteredEmployees.slice(indexOfFirstEmployee, indexOfLastEmployee);
+
+  // Change page
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  // Calculate total pages
+  const totalPages = Math.ceil(filteredEmployees.length / employeesPerPage);
+
   return (
-    <div className="p-4">
+    <div >
       <h2 className="mb-4 text-center text-primary">Employee List</h2>
 
       {/* Search bar for filtering */}
@@ -61,61 +76,91 @@ const UserRegistration = () => {
         <MDBInput type="text" label="Search by Name or Department" value={filterQuery} onChange={handleFilter} />
       </div>
 
-      <MDBTable align="middle" hover bordered responsive className="custom-table">
-  <MDBTableHead className="bg-primary text-white rounded-top">
-    <tr>
-      <th scope="col" style={{ width: '10%' }}>Profile</th>
-      <th scope="col" style={{ width: '20%' }}>Name</th>
-      <th scope="col" style={{ width: '15%' }}>Username</th>
-      <th scope="col" style={{ width: '15%' }}>Department</th>
-      <th scope="col" style={{ width: '20%' }}>Email</th>
-      <th scope="col" style={{ width: '15%' }}>Contact</th>
-      <th scope="col" style={{ width: '20%' }}>Address</th>
-      <th scope="col" style={{ width: '15%' }}>Actions</th>
-    </tr>
-  </MDBTableHead>
-  <MDBTableBody style={{ minHeight: '200px' }}>
-    {filteredEmployees.length > 0 ? (
-      filteredEmployees.map((employee, index) => (
-        <tr key={index} style={{ height: rowHeight }}>
-          {/* Profile Image Column */}
-          <td className="text-center">
-            <img
-              src={employee.user.profile_picture || 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALEAAACUCAMAAADrljhyAAAAMFBMVEXk5ueutLfp6uu/xMarsbSyuLvh4+TR1Na5vsGorrLIzM7e4OHLz9HY2928wcS1u767X01QAAAEMklEQVR4nO2c25bqIAxAIeXS0lL+/28PqOM4VSsQmuBZ3S8zj3tlxQRDUIiTk5OTk5OTk5OTk5OTk/8MADF7m/Dp/74BYbwb1XRHjos3olttMHbQSsk/TCo426czCBfkRveKksH1mB5ueql7k1YLt98Wq6f3vpfsCJbb8QEQ605872F2hlv0B/D6s3ByDjO36o3lQ0L8Kk99ZIbLCvDNeemgZpQIR/iVC4Uld5mDpVA4ljnPGWXwxcKRmVHZ6AphNTLW5bEmxFINbMLlSXyFLZVNnW+CxxiGyhDHvHAsyia3Ob+C44QBI0JYOQZjjxCWUjMEuT6LExN9s55rmsdjkMmNLSrEqSZTG+OSIjU+6gKHFI5BJjb2mGJ8NaZNCyg9yD9D3PcAWSkSK60xOimkDJTCYkYnBXXbs3hhqSk/erA0MJaWMJHBfZ3x0ECYdHLRxpjyjAzr1xl/X4y/z7hFrSCdzFYMCF9AWt2w30DIjUXVTHMDaZcWosXZjXTECQ1iPNKejzEDoRvEX00tPi2Ib8pQY8ILE62wEAFrHKjnFdgeMpFf7OFGm7FHE/tGMq7794Tpb2+QX/UU+aAwghmyqJXhTg93fiM9Bd2VEcK086C7cX3fox9336ideivaIeEDlXchiv4O5IfaDx/jthDUXP7T34D8US7PC0V7kn9iDqV7QjyF7QFfFuUOtvSgaFzfgbBIy0LZzjEl2NfdEia3kzAuCG3J29zkXs57BObPmRE7XRcZcWfZd1aBf2FzA8xOvs2NSS+mN+GEsfrVLr2atO1mu3sDxECPWit1fWKR/mo9urnHhwp3orRd3LCOkXVwi+1b90pUNGaOGNH/K6HENziKW1y9vyRECPqSwzGTdRgH56z389xTuNNbMZtMY1X4+dD9FooLUqec9qYH6/RJW7WWW9PnGhe1Y93wzNLGrmrvOdOL2jyFZeapzikVBlmke2NSMdTkLRCEHcKnRNiJNHVfAePk66d4+dJSjnS76X6tSYZXkV4IMjqmw1qdDc/S8WN4cKDBv3mZWe2s3aFdsng6keN83FArHiXb5cMjUzhmOAv2gABfUdK1r88gGtxE79H8mqHBPfQ+09Cy0kHxu8EKVMOOAuKwDP6j3CwzwLctwTvOjfbJWmzu5iq3GMy1WRTLVl6/TLiBcoM3CaXKI06YMIfvypgoA3bto065/vYMZg5hzNsWg95eqqX2/Il9HlZP3VORNvuvdVTeqx59WtujZresxWYmhuK84MyJC8UnDMMc4vL1suxfgznMuLRbN3gxiKTsBxgQa1bt0EXG3LaJohUz/EvdFhTsmDV5BISnoFdX/SDMAWR/t+Y4x78i/3sq/VelN2QvFRnc+nY7svvezHaS35D942otnlk1IXtG1EPDu5J7tujlg5f/0yfDpDoh9yXRMvRC9osG6IZM4b75B+okOfVjzocqAAAAAElFTkSuQmCC'}
-              alt="Profile"
-              className="rounded-circle"
-              style={{ width: '40px', height: '40px', objectFit: 'cover' }}
-            />
-          </td>
+      {/* Table container to ensure sticky header stays on scroll */}
+      <div className='table-container'>
+        <MDBTable align="middle" hover bordered responsive className="custom-table">
+          <MDBTableHead
+            className="bg-primary text-white rounded-top"
+            style={{
+              position: 'sticky',
+              top: 0,
+              backgroundColor: '#007bff',
+              zIndex: 2,
+              boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+            }}
+          >
+            <tr>
+              <th scope="col" style={{ width: '10%' }}>Profile</th>
+              <th scope="col" style={{ width: '20%' }}>Name</th>
+              <th scope="col" style={{ width: '15%' }}>Username</th>
+              <th scope="col" style={{ width: '15%' }}>Department</th>
+              <th scope="col" style={{ width: '20%' }}>Email</th>
+              <th scope="col" style={{ width: '15%' }}>Contact</th>
+              <th scope="col" style={{ width: '20%' }}>Address</th>
+              <th scope="col" style={{ width: '15%' }}>Actions</th>
+            </tr>
+          </MDBTableHead>
+          <MDBTableBody style={{ minHeight: '200px' }}>
+            {currentEmployees.length > 0 ? (
+              currentEmployees.map((employee, index) => (
+                <tr key={index} style={{ height: rowHeight }}>
+                  {/* Profile Image Column */}
+                  <td className="text-center">
+                    <img
+                      src={employee.user.profile_picture || 'https://static.thenounproject.com/png/1095867-512.png'}
+                      alt="Profile"
+                      className="rounded-circle"
+                      style={{ width: '40px', height: '40px', objectFit: 'cover' }}
+                    />
+                  </td>
 
-          {/* Name Column */}
-          <td>
-            <p className="fw-bold mb-1">
-              {employee.first_name} {employee.middle_name} {employee.last_name}
-            </p>
-          </td>
+                  {/* Name Column */}
+                  <td>
+                    <p className="fw-bold mb-1">
+                      {employee.first_name} {employee.middle_name} {employee.last_name}
+                    </p>
+                  </td>
 
-          <td>{employee.user.username}</td>
-          <td>{employee.department ? employee.department : 'Unassigned'}</td>
-          <td>{employee.user.email}</td>
-          <td>{employee.contact_number}</td>
-          <td>{employee.address}</td>
-          <td>
-            <button className="btn btn-primary p-1">Edit</button>
-            
-          </td>
-        </tr>
-      ))
-    ) : (
-      <tr>
-        <td colSpan="8" className="text-center text-muted">
-          No employees found
-        </td>
-      </tr>
-    )}
-  </MDBTableBody>
-</MDBTable>
+                  <td>{employee.user.username}</td>
+                  <td>{employee.department ? employee.department : 'Unassigned'}</td>
+                  <td>{employee.user.email}</td>
+                  <td>{employee.contact_number}</td>
+                  <td>{employee.address}</td>
+                  <td>
+                    {/* Pass employee directly to EditEmployeeModal */}
+                    <EditEmployeeModal employee={employee} />
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="8" className="text-center text-muted">
+                  No employees found
+                </td>
+              </tr>
+            )}
+          </MDBTableBody>
+        </MDBTable>
+      </div>
 
+      {/* Pagination Controls */}
+      <div className="d-flex justify-content-center mt-3">
+        <MDBBtn
+          disabled={currentPage === 1}
+          onClick={() => paginate(currentPage - 1)}
+        >
+          <span className="material-symbols-outlined">arrow_back</span>
+        </MDBBtn>
+        <span className="mx-3">
+          Page {currentPage} of {totalPages}
+        </span>
+        <MDBBtn
+          disabled={currentPage === totalPages}
+          onClick={() => paginate(currentPage + 1)}
+        >
+          <span className="material-symbols-outlined">arrow_forward</span>
+        </MDBBtn>
+      </div>
 
       <div className="mt-5">
         <CreateUserForm />

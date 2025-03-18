@@ -40,11 +40,10 @@ export const LeaveRequests = ({ leaves }) => {
       style={{
         minHeight: "100vh",
         width:"180%",
-        marginLeft:"30px",
+        
       }}
     >
       <div
-        className="w-100"
         
       >
         <h2 className="mb-4 text-center text-primary">Leave Requests</h2>
@@ -60,7 +59,7 @@ export const LeaveRequests = ({ leaves }) => {
             padding: "10px",
             boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
             marginBottom: "20px",
-            width: "100%",
+           
           }}
         >
           <MDBInput
@@ -77,7 +76,7 @@ export const LeaveRequests = ({ leaves }) => {
           bordered
           responsive
           className="custom-table" // Apply custom class for more control
-          style={{ width: '100%', maxWidth: '2000px', margin: 'auto' }}
+          style={{ width: '100%'}}
         >
           <MDBTableHead className="bg-primary text-white rounded-top">
             <tr>
@@ -90,7 +89,7 @@ export const LeaveRequests = ({ leaves }) => {
               <th scope="col" style={{ width: "10%" }}>Actions</th>
             </tr>
           </MDBTableHead>
-          <MDBTableBody style={{ minHeight: "200px" }}>
+          <MDBTableBody style={{ minHeight: "200px"}}>
             {filteredLeaves.length > 0 ? (
               filteredLeaves.map((leave) => (
                 <tr key={leave.id}>

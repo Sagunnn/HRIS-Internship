@@ -75,9 +75,11 @@ export function EditDepartmentModal({ departmentData }) {
 
   return (
     <>
-      <MDBBtn onClick={toggleOpen} color="primary">
-        Edit Department
-      </MDBBtn>
+      <button onClick={toggleOpen} className="btn btn-primary">
+      <span class="material-symbols-outlined">
+      edit
+      </span>
+      </button>
 
       <MDBModal open={basicModal} onClose={() => setBasicModal(false)} tabIndex="-1">
         <MDBModalDialog size="lg">

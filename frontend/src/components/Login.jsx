@@ -43,10 +43,10 @@ const Login = () => {
       <ToastContainer />
       
       
-      <div className="container vh-100 vh-100 mx-auto d-flex justify-content-center align-items-center">
-        <div className="card shadow-lg p-4" style={{ width: "450px", marginRight: "200px" }}>
+      <div className="container d-flex justify-content-center align-items-center">
+        <div className="card shadow-lg p-4" style={{ width: "450px",  marginRight:"200px", marginTop:"150px"}}>
         <img src={grafiLogo} alt="" style={{ width: "140px", height: "auto" }}/><br></br>
-          <h3 className="text-center text-danger fw-bold">HRIS Login</h3>
+          <h3 className="text-center text-danger fw-bold">LMS Login</h3>
           <form onSubmit={handleSubmit}>
             {/* <div className="mb-3">
               <label className="form-label">Role</label>

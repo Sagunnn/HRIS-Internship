@@ -37,9 +37,11 @@ ul li a {
     color: white;
     text-decoration: none;
     font-size: 16px;
-    display: block;
+    display: flex;  /* Use flexbox for proper alignment */
+    align-items: center; /* Align icon and text vertically */
+    gap: 12px; /* Adds spacing between the icon and label */
     border-radius: 0px;
-    padding: 10px 20px 10px 40px;
+    padding: 10px 20px;
 }
 
 ul li a:hover {
@@ -47,12 +49,18 @@ ul li a:hover {
 }
 
 ul li a.active {
-    background: #29ABE1;
+    background: #dc354542;
+}
+
+.material-symbols-outlined {
+    font-size: 22px; /* Adjust icon size */
+    min-width: 30px; /* Ensures consistent spacing */
+    text-align: center; /* Centers the icon */
 }
 
 .logo {
-    margin: 10px 60px;
-    width: 100px;
+    margin: 10px;
+    width: 190px;
 }
 
 .main {

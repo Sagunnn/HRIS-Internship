@@ -20,6 +20,7 @@ const Departments = () => {
   }, []);
 
   const getDepartments = async () => {
+    console.log("hello123",localStorage.getItem('fullname'),"123")
     try {
       const data = await fetchDepartments();
       setDepartmentData(data);
@@ -93,7 +94,7 @@ const Departments = () => {
             <th>Department Name</th>
             <th>Department ID</th>
             <th>Manager</th>
-            <th>Actions</th>
+            <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Actions</th>
           </tr>
         </MDBTableHead>
 
@@ -117,10 +118,12 @@ const Departments = () => {
                   <td>{department.department_name}</td>
                   <td>{department.department_id}</td>
                   <td>{department.manager_name || 'NULL'}</td>
-                  <td>
+                  <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>&nbsp;
                     {/* <button className="btn btn-primary" onClick={() => editDepartment(department)}>Edit</button> */}
                     <EditDepartmentModal departmentData={department}/>
-                    <button className="btn btn-danger" onClick={() => deleteDepartment(department.department_id)}>Delete</button>
+                    <button className="btn btn-danger" style={{ marginRight: 0 }} onClick={() => deleteDepartment(department.department_id)}><span class="material-symbols-outlined">
+                      delete
+                      </span></button>
                     
                   </td>
                 </>

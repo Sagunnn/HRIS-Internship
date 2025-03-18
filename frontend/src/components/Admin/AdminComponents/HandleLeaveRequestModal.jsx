@@ -11,6 +11,7 @@ import {
   MDBTextArea,
 } from 'mdb-react-ui-kit';
 import { updateLeaveStatus } from '../../../services/leaveServices';
+import { toast, ToastContainer } from "react-toastify";
 
 const HandleLeaveRequestModal = ({ leave, handleApproval }) => {
   const [basicModal, setBasicModal] = useState(false);
@@ -21,7 +22,8 @@ const HandleLeaveRequestModal = ({ leave, handleApproval }) => {
   const handleSave = async () => {
     try {
       await updateLeaveStatus(leave.id, status);
-      setBasicModal(false); // Close modal after saving
+      setBasicModal(false)
+      toast("Status Change Successful"); // Close modal after saving
     } catch (error) {
       console.error('Error updating leave status:', error);
       alert('Failed to update status');

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { pendingApprovals, updateLeaveStatus } from '../../../services/leaveServices';
 import LeaveRequestModal from '../../Employee/LeaveRequestModal';
 import HandleLeaveRequestModal from './HandleLeaveRequestModal';
-
+import { toast, ToastContainer } from "react-toastify";
 const LeaveApproval = () => {
     const [leaves, setLeaves] = useState([]);
     const [filteredLeaves, setFilteredLeaves] = useState([]);
@@ -15,12 +15,17 @@ const LeaveApproval = () => {
     const getLeaves = async () => {
         try {
             const data = await pendingApprovals();
-            setLeaves(data);
-            setFilteredLeaves(data); // Initially, show all leaves
+            
+            // Sort leaves by start_date in descending order (latest first)
+            const sortedData = data.sort((a, b) => new Date(b.start_date) - new Date(a.start_date));
+    
+            setLeaves(sortedData);
+            setFilteredLeaves(sortedData); // Initially, show all sorted leaves
         } catch (err) {
             console.error(err);
         }
     };
+    
 
     const handleApproval = async (leaveId, status) => {
         try {
@@ -42,7 +47,8 @@ const LeaveApproval = () => {
     };
 
     return (
-        <div className="container mt-5">
+        <div className="">
+            <ToastContainer/>
             <h2 className="text-center text-primary mb-4">Leave Approvals</h2>
 
             <div className="mb-4 text-center">

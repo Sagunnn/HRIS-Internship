@@ -55,13 +55,13 @@ const UserRegistration = () => {
           padding: '10px',
           boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
           marginBottom: '20px',
-          width: '100%',
+          width:'100%'
         }}
       >
         <MDBInput type="text" label="Search by Name or Department" value={filterQuery} onChange={handleFilter} />
       </div>
 
-      <MDBTable align="middle" hover bordered responsive className="custom-table">
+      <MDBTable align="middle" hover bordered responsive className="custom-table" >
   <MDBTableHead className="bg-primary text-white rounded-top">
     <tr>
       <th scope="col" style={{ width: '10%' }}>Profile</th>
