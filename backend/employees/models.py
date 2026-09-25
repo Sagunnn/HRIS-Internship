@@ -1,5 +1,4 @@
 from django.db import models
-from phonenumber_field.modelfields import PhoneNumberField
 
 class Employee(models.Model):
     first_name=models.CharField(max_length=30, blank=False)
@@ -10,5 +9,8 @@ class Employee(models.Model):
     department=models.ForeignKey('departments.Department',to_field='department_id',on_delete=models.SET_NULL, null=True, blank= True, related_name='employee')
     user=models.OneToOneField('authentication.User',on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.get_full_name()
+
     def get_full_name(self):
-        return f"{self.first_name} {self.middle_name} {self.last_name}".strip()
+        return " ".join(part for part in (self.first_name, self.middle_name, self.last_name) if part)

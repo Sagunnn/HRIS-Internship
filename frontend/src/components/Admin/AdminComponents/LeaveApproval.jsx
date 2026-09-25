@@ -1,85 +1,51 @@
 import React, { useEffect, useState } from 'react';
-import { pendingApprovals, updateLeaveStatus } from '../../../services/leaveServices';
+import { toast, ToastContainer } from 'react-toastify';
+import { pendingApprovals } from '../../../services/leaveServices';
+import { getErrorMessage } from '../../../services/api';
 import LeaveRequestModal from '../../Employee/LeaveRequestModal';
+import LeaveStatusBadge from '../../Employee/LeaveStatusBadge';
+import { leaveTypeLabel } from '../../../services/leaveServices';
 import HandleLeaveRequestModal from './HandleLeaveRequestModal';
-import { toast, ToastContainer } from "react-toastify";
+
+const FILTERS = ['ALL', 'PENDING', 'APPROVED', 'REJECTED'];
+
 const LeaveApproval = () => {
     const [leaves, setLeaves] = useState([]);
-    const [filteredLeaves, setFilteredLeaves] = useState([]);
     const [filterStatus, setFilterStatus] = useState('ALL');
+
+    const getLeaves = async () => {
+        try {
+            setLeaves(await pendingApprovals()); // newest first, sorted by the API
+        } catch (err) {
+            toast.error(getErrorMessage(err, 'Failed to load leave requests.'));
+        }
+    };
 
     useEffect(() => {
         getLeaves();
     }, []);
 
-    const getLeaves = async () => {
-        try {
-            const data = await pendingApprovals();
-            
-            // Sort leaves by start_date in descending order (latest first)
-            const sortedData = data.sort((a, b) => new Date(b.start_date) - new Date(a.start_date));
-    
-            setLeaves(sortedData);
-            setFilteredLeaves(sortedData); // Initially, show all sorted leaves
-        } catch (err) {
-            console.error(err);
-        }
-    };
-    
-
-    const handleApproval = async (leaveId, status) => {
-        try {
-            await updateLeaveStatus(leaveId, status);
-            setLeaves(leaves.filter(leave => leave.id !== leaveId)); // Remove from UI after update
-            setFilteredLeaves(filteredLeaves.filter(leave => leave.id !== leaveId)); // Remove from filtered list
-        } catch (err) {
-            console.error('Error updating leave:', err);
-        }
-    };
-
-    const handleFilterChange = (status) => {
-        setFilterStatus(status);
-        if (status === 'ALL') {
-            setFilteredLeaves(leaves);
-        } else {
-            setFilteredLeaves(leaves.filter(leave => leave.status === status));
-        }
-    };
+    const filteredLeaves = filterStatus === 'ALL' ? leaves : leaves.filter((leave) => leave.status === filterStatus);
 
     return (
-        <div className="">
-            <ToastContainer/>
+        <div className="p-4 w-100">
+            <ToastContainer />
             <h2 className="text-center text-primary mb-4">Leave Approvals</h2>
 
-            <div className="mb-4 text-center">
-                <button
-                    className={`btn ${filterStatus === 'ALL' ? 'btn-primary' : 'btn-outline-secondary'} me-2`}
-                    onClick={() => handleFilterChange('ALL')}
-                >
-                    All
-                </button>
-                <button
-                    className={`btn ${filterStatus === 'PENDING' ? 'btn-primary' : 'btn-outline-secondary'} me-2`}
-                    onClick={() => handleFilterChange('PENDING')}
-                >
-                    Pending
-                </button>
-                <button
-                    className={`btn ${filterStatus === 'APPROVED' ? 'btn-primary' : 'btn-outline-secondary'} me-2`}
-                    onClick={() => handleFilterChange('APPROVED')}
-                >
-                    Approved
-                </button>
-                <button
-                    className={`btn ${filterStatus === 'REJECTED' ? 'btn-primary' : 'btn-outline-secondary'}`}
-                    onClick={() => handleFilterChange('REJECTED')}
-                >
-                    Rejected
-                </button>
+            <div className="mb-4 d-flex justify-content-center gap-2">
+                {FILTERS.map((status) => (
+                    <button
+                        key={status}
+                        className={`btn ${filterStatus === status ? 'btn-primary' : 'btn-outline-secondary'}`}
+                        onClick={() => setFilterStatus(status)}
+                    >
+                        {status.charAt(0) + status.slice(1).toLowerCase()}
+                    </button>
+                ))}
             </div>
 
             <div className="table-responsive">
-                <table className="table table-bordered table-hover text-center shadow-lg">
+                <table className="table table-bordered table-hover text-center shadow-sm">
                     <thead className="bg-primary text-white">
                         <tr>
                             <th>ID</th>
@@ -99,23 +65,13 @@ const LeaveApproval = () => {
                                 <tr key={leave.id}>
                                     <td>{leave.id}</td>
                                     <td>{leave.employee.first_name} {leave.employee.last_name}</td>
-                                    <td>{leave.employee.department}</td>
-                                    <td>{leave.leave_type}</td>
+                                    <td>{leave.employee.department || 'Unassigned'}</td>
+                                    <td>{leaveTypeLabel(leave.leave_type)}</td>
                                     <td>{leave.start_date}</td>
                                     <td>{leave.end_date}</td>
                                     <td>{leave.reason}</td>
-                                    <td>
-                                        <span className={`badge ${
-                                            leave.status === 'PENDING' ? 'bg-light' :
-                                            leave.status === 'APPROVED' ? 'bg-success' :
-                                            'bg-danger'
-                                        } text-dark`}>
-                                            {leave.status}
-                                        </span>
-                                    </td>
-                                    <td>
-                                    <HandleLeaveRequestModal leave={leave}/>
-                                    </td>
+                                    <td><LeaveStatusBadge status={leave.status} /></td>
+                                    <td><HandleLeaveRequestModal leave={leave} onUpdated={getLeaves} /></td>
                                 </tr>
                             ))
                         ) : (
@@ -125,8 +81,8 @@ const LeaveApproval = () => {
                         )}
                     </tbody>
                 </table>
-                <LeaveRequestModal/>
             </div>
+            <LeaveRequestModal onCreated={getLeaves} />
         </div>
     );
 };

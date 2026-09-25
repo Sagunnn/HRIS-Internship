@@ -1,41 +1,28 @@
 import React from 'react'
-import { Navigate } from 'react-router'
-import { jwtDecode } from 'jwt-decode'; 
-import AdminDashboard from './Admin/AdminDashboard';
+import { Navigate } from 'react-router-dom'
+import { jwtDecode } from 'jwt-decode';
+import { isAdmin, logout } from '../services/authorization';
 
-const ProtectedRoute = ({children,allowedRole}) => {
-    const token= localStorage.getItem('access_token')
-    if (!token){
-        console.log('No token found, redirecting to login');
-        return <Navigate to='/login'/>
-    }
+const isTokenValid = (token) => {
+  try {
+    return jwtDecode(token).exp > Date.now() / 1000
+  } catch {
+    return false
+  }
+}
 
-    try{
-        const decode=jwtDecode(token)
-        const currentTime=Date.now()/1000
+const ProtectedRoute = ({ children, adminOnly = false }) => {
+  const token = localStorage.getItem('access_token')
 
-        if (decode.exp< currentTime){
-            localStorage.removeItem("access")
-            return <Navigate to='/login'/>
-        }
-    }
-    catch(error){
-        localStorage.removeItem("access")
-        return <Navigate to= '/login'/>
-    }
-    // const role=localStorage.getItem('role')
-    // if (role === 'Admin'){
-    //     return (
-    //         <>
-    //             <AdminDashboard/>
-    //         </>
-    //     )
-       
-        
-    // }
-    // else{
-    //     <Navigate to='/employee'/>
-    // }
+  if (!token || !isTokenValid(token)) {
+    logout()
+    return <Navigate to='/login' replace />
+  }
+
+  if (adminOnly && !isAdmin()) {
+    return <Navigate to='/employee' replace />
+  }
+
   return children
 }
 

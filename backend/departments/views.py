@@ -1,12 +1,11 @@
-from django.shortcuts import render
-from rest_framework.viewsets import  ModelViewSet
-from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
+
+from api.permissions import IsHRAdminOrReadOnly
 from .models import Department
 from .serializers import DepartmentSerializer
-from rest_framework.permissions import IsAuthenticated
-# Create your views here.
+
 
 class DepartmentView(ModelViewSet):
-    queryset=Department.objects.all()
-    serializer_class= DepartmentSerializer
-    permission_classes= [IsAuthenticated]
+    queryset = Department.objects.select_related('manager').order_by('department_name')
+    serializer_class = DepartmentSerializer
+    permission_classes = [IsHRAdminOrReadOnly]

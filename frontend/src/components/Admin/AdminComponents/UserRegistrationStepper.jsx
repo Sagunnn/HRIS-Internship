@@ -9,8 +9,10 @@ import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
+import { toast } from 'react-toastify';
 import { fetchDepartments } from '../../../services/departments';
 import { createEmployee } from '../../../services/employeeServices';
+import { getErrorMessage } from '../../../services/api';
 
 const steps = [
   { label: 'Personal Information', fields: [
@@ -36,7 +38,7 @@ const steps = [
     ] },
 ];
 
-export default function UserRegistrationStepper() {
+export default function UserRegistrationStepper({ onCreated }) {
   const [activeStep, setActiveStep] = useState(0);
   const [departments, setDepartments] = useState([]);
   const [formData, setFormData] = useState({
@@ -62,22 +64,19 @@ export default function UserRegistrationStepper() {
   useEffect(() => {
     async function getDepartments() {
       try {
-        const data = await fetchDepartments();
-        setDepartments(data);
+        setDepartments(await fetchDepartments());
       } catch (error) {
-        console.error('Error fetching departments:', error);
+        toast.error(getErrorMessage(error, 'Failed to load departments.'));
       }
     }
     getDepartments();
   }, []);
 
   const handleChange = (e) => {
-    e.preventDefault();
     const { name, value, type, checked, files } = e.target;
-    
+
     setFormData((prev) => {
       if (name === 'profile_picture' && type === 'file') {
-        console.log("Profile picture file:", files[0]); // Debugging file selection
         return {
           ...prev,
           user: { ...prev.user, profile_picture: files[0] },
@@ -98,7 +97,7 @@ export default function UserRegistrationStepper() {
 
   const handleSubmit = async () => {
     if (formData.user.password !== formData.user.confirm_password) {
-      alert("Passwords do not match!");
+      toast.error("Passwords do not match!");
       return;
     }
 
@@ -118,25 +117,21 @@ export default function UserRegistrationStepper() {
     }
 
     // Append other employee details
-    dataToSend.append("department", formData.department);
+    if (formData.department) {
+      dataToSend.append("department", formData.department);
+    }
     dataToSend.append("contact_number", formData.contact_number);
     dataToSend.append("address", formData.address);
     dataToSend.append("first_name", formData.first_name);
     dataToSend.append("middle_name", formData.middle_name || '');
     dataToSend.append("last_name", formData.last_name);
 
-    // Debugging: Print FormData contents
-    for (let pair of dataToSend.entries()) {
-      console.log(`${pair[0]}:`, pair[1]);
-    }
-
     try {
-      const response = await createEmployee(dataToSend);
-      alert("User registered successfully!");
-      console.log("✅ Success:", response.data);
+      await createEmployee(dataToSend);
+      toast.success("Employee registered successfully!");
+      onCreated?.();
     } catch (error) {
-      console.error("❌ Error submitting form:", error);
-      alert(`Error: ${error.response ? JSON.stringify(error.response.data) : error.message}`);
+      toast.error(getErrorMessage(error, "Failed to register employee."));
     }
   };
 
@@ -162,7 +157,7 @@ export default function UserRegistrationStepper() {
                     {field.name === 'department' ? (
                       departments.length > 0 ? (
                         departments.map((dept) => (
-                          <MenuItem key={dept.id} value={dept.department_name}>{dept.department_name}</MenuItem>
+                          <MenuItem key={dept.department_id} value={dept.department_name}>{dept.department_name}</MenuItem>
                         ))
                       ) : <MenuItem disabled>No departments available</MenuItem>
                     ) : (
@@ -178,7 +173,10 @@ export default function UserRegistrationStepper() {
                     label={field.label}
                   />
                 ) : field.type === 'file' ? (
-                  <input key={field.name} type="file" name={field.name} onChange={handleChange} />
+                  <Box key={field.name} sx={{ my: 2 }}>
+                    <label className="d-block mb-1">{field.label}</label>
+                    <input type="file" accept="image/*" name={field.name} onChange={handleChange} />
+                  </Box>
                 ) : (
                   <TextField
                     key={field.name}

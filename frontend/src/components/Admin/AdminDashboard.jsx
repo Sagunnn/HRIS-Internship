@@ -1,121 +1,85 @@
 import React, { useState, useEffect } from 'react';
-import { TbBurger } from 'react-icons/tb';
-import Navbar from './AdminComponents/AdminNavbar';
+import { Link } from 'react-router-dom';
 import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css'; // Import styles for the calendar
-import { pendingApprovals } from '../../services/leaveServices'; // Assuming this is where you fetch leave data
-import { MDBTable, MDBTableHead, MDBTableBody, MDBBadge } from 'mdb-react-ui-kit'; // For table display
-import './AdminComponents/Navbar.css';
+import 'react-calendar/dist/Calendar.css';
+import { MDBTable, MDBTableHead, MDBTableBody } from 'mdb-react-ui-kit';
+import { pendingApprovals } from '../../services/leaveServices';
+import { toISODate } from '../../services/dates';
+import LeaveStatusBadge from '../Employee/LeaveStatusBadge';
+import { leaveTypeLabel } from '../../services/leaveServices';
 
 const AdminDashboard = () => {
-  const [employeesOnLeaveToday, setEmployeesOnLeaveToday] = useState([]);
-  const [pendingLeaves, setPendingLeaves] = useState([]);
+  const [leaves, setLeaves] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [error, setError] = useState(null);
 
-  // Fetch all employees who are on leave today
-  const fetchEmployeesOnLeaveToday = async () => {
-    try {
-      const data = await pendingApprovals(); // Fetch all leave data
-
-      // Get today's date in YYYY-MM-DD format
-      const today = new Date();
-      const todayStr = today.toISOString().split('T')[0]; // Get date in YYYY-MM-DD format
-
-      // Filter only employees who have approved leave today
-      const employeesOnLeave = data.filter(leave => {
-        const leaveStartDate = new Date(leave.start_date);
-        const leaveEndDate = new Date(leave.end_date);
-
-        // Compare only date parts of start and end date with today
-        return (
-          leave.status === 'APPROVED' &&
-          leaveStartDate.toISOString().split('T')[0] <= todayStr &&
-          leaveEndDate.toISOString().split('T')[0] >= todayStr
-        );
-      });
-
-      // Filter pending leaves (if any)
-      const pendingLeavesData = data.filter(leave => leave.status === 'PENDING');
-
-      setEmployeesOnLeaveToday(employeesOnLeave);
-      setPendingLeaves(pendingLeavesData);
-    } catch (error) {
-      console.error('Error fetching employees on leave:', error);
-    }
-  };
-
-  // Fetch employees on leave today when the component mounts
   useEffect(() => {
-    fetchEmployeesOnLeaveToday();
-  }, []); // Only fetch once when the component mounts
+    pendingApprovals()
+      .then(setLeaves)
+      .catch(() => setError('Failed to load leave data.'));
+  }, []);
+
+  const day = toISODate(selectedDate);
+  const isToday = day === toISODate(new Date());
+  const employeesOnLeave = leaves.filter(
+    (leave) => leave.status === 'APPROVED' && leave.start_date <= day && leave.end_date >= day
+  );
+  const pendingCount = leaves.filter((leave) => leave.status === 'PENDING').length;
 
   return (
-    <div>
-      <Navbar /> {/* Include Navbar */}
-      <div className="container mt-4">
-        <h1>Admin Dashboard</h1>
+    <div className="container mt-4">
+      <h1>Admin Dashboard</h1>
+      {error && <div className="alert alert-danger">{error}</div>}
 
-        <div className="d-flex flex-row">
-          {/* Calendar Section */}
-          <div className="calendar-container mb-4 flex-grow-1">
-            <h3>Calendar</h3>
-            <Calendar />
+      <div className="mb-4">
+        {pendingCount > 0 ? (
+          <div className="alert alert-warning d-flex justify-content-between align-items-center" role="alert">
+            <span>{pendingCount} leave request{pendingCount === 1 ? '' : 's'} awaiting approval.</span>
+            <Link to="/admin/leave_approval" className="btn btn-sm btn-warning">Review</Link>
           </div>
+        ) : (
+          <div className="alert alert-info" role="alert">No leave approvals pending.</div>
+        )}
+      </div>
 
-          {/* Employees on Leave Section */}
-          <div className="table-container mb-4 ms-4 flex-grow-2" style={{ width: '70%' }}>
-            <h3>Employees on Leave Today</h3>
+      <div className="d-flex flex-row gap-4">
+        <div className="calendar-container mb-4">
+          <h3>Calendar</h3>
+          <Calendar onChange={setSelectedDate} value={selectedDate} />
+        </div>
 
-            {/* Approved Leaves Table */}
-            <div className="mb-4">
-              <MDBTable bordered hover responsive>
-                <MDBTableHead className="bg-primary text-white">
-                  <tr>
-                    <th>ID</th>
-                    <th>Employee</th>
-                    <th>Department</th>
-                    <th>Leave Type</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Reason</th>
-                    <th>Status</th>
+        <div className="mb-4 flex-grow-1">
+          <h3>Employees on Leave {isToday ? 'Today' : `on ${day}`}</h3>
+          <MDBTable bordered hover responsive>
+            <MDBTableHead className="bg-primary text-white">
+              <tr>
+                <th>Employee</th>
+                <th>Department</th>
+                <th>Leave Type</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Status</th>
+              </tr>
+            </MDBTableHead>
+            <MDBTableBody>
+              {employeesOnLeave.length > 0 ? (
+                employeesOnLeave.map((leave) => (
+                  <tr key={leave.id}>
+                    <td>{leave.employee.first_name} {leave.employee.last_name}</td>
+                    <td>{leave.employee.department || 'Unassigned'}</td>
+                    <td>{leaveTypeLabel(leave.leave_type)}</td>
+                    <td>{leave.start_date}</td>
+                    <td>{leave.end_date}</td>
+                    <td><LeaveStatusBadge status={leave.status} /></td>
                   </tr>
-                </MDBTableHead>
-                <MDBTableBody>
-                  {employeesOnLeaveToday.length > 0 ? (
-                    employeesOnLeaveToday.map((leave) => (
-                      <tr key={leave.id}>
-                        <td>{leave.id}</td>
-                        <td>{leave.employee.first_name} {leave.employee.last_name}</td>
-                        <td>{leave.employee.department}</td>
-                        <td>{leave.leave_type}</td>
-                        <td>{leave.start_date}</td>
-                        <td>{leave.end_date}</td>
-                        <td>{leave.reason}</td>
-                        <td><MDBBadge color="success">Approved</MDBBadge></td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="8" className="text-center">No employees are on approved leave today.</td>
-                    </tr>
-                  )}
-                </MDBTableBody>
-              </MDBTable>
-            </div>
-
-            {/* Pending Leave Approval Message */}
-            <div className="mb-4">
-              {pendingLeaves.length > 0 ? (
-                <div className="alert alert-warning" role="alert">
-                  There are pending leave approval requests.
-                </div>
+                ))
               ) : (
-                <div className="alert alert-info" role="alert">
-                  No leave approvals pending.
-                </div>
+                <tr>
+                  <td colSpan="6" className="text-center">No employees are on approved leave.</td>
+                </tr>
               )}
-            </div>
-          </div>
+            </MDBTableBody>
+          </MDBTable>
         </div>
       </div>
     </div>

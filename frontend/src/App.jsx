@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 
 import Login from './components/Login';
-import HomePage from './pages/HomePage.jsx';
 import UserRegistration from './components/UserRegistration.jsx';
 import Users from './components/Users.jsx';
-import Logout from './components/Logout.jsx';
 import Departments from './components/Departments.jsx';
 import SideNavbar from './components/SideNavbar.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
@@ -16,99 +14,58 @@ import UserProfile from './components/Employee/UserProfile.jsx';
 import EmployeesList from './components/Employee/EmployeesList.jsx';
 import Leaves from './components/Employee/Leaves.jsx';
 import LeaveApproval from './components/Admin/AdminComponents/LeaveApproval.jsx';
+import { getHomePath, isAdmin } from './services/authorization';
 import './main.css';
-import {LeaveRequests} from './components/Employee/LeaveRequests.jsx';
 
-const App = () => {
-  const [sideNavbar, setSideNavbar] = useState(true);
-  const [role, setRole] = useState(localStorage.getItem("role") || "");
-  const [fullName, setFullName] = useState(localStorage.getItem('full_name') || '');
+const App = () => (
+  <Router>
+    <MainContent />
+  </Router>
+);
 
-  const toggleSideNavbar = () => {
-    setSideNavbar(!sideNavbar);
-  };
-
-  useEffect(() => {
-    console.log("hello123",localStorage.getItem('fullname'),"123")
-    const roleFromStorage = localStorage.getItem('role');
-    const fullNameFromStorage = localStorage.getItem('fullname');
-    setRole(roleFromStorage);
-    setFullName(fullNameFromStorage);
-
-    console.log("here", roleFromStorage);
-    console.log("here", fullNameFromStorage);
-  }, []);
-
-  return (
-    <Router>
-      <MainContent role={role} fullName={fullName} sideNavbar={sideNavbar} toggleSideNavbar={toggleSideNavbar} />
-    </Router>
-  );
-};
-
-const MainContent = ({ role, fullName, sideNavbar, toggleSideNavbar }) => {
+const MainContent = () => {
   const location = useLocation();
-  const isLoginPage = location.pathname === "/login";
+  const isLoginPage = location.pathname === '/login';
+  const isLoggedIn = Boolean(localStorage.getItem('access_token'));
+  const fullName = localStorage.getItem('fullname');
+
+  const admin = (element) => <ProtectedRoute adminOnly>{element}</ProtectedRoute>;
+  const user = (element) => <ProtectedRoute>{element}</ProtectedRoute>;
 
   return (
     <div>
-      {!isLoginPage && (
+      {!isLoginPage && isLoggedIn && (
         <>
-          <header onClick={toggleSideNavbar}>
+          <header>
             <div className="header-content">
-              {fullName ? (
-                <span>Welcome, {fullName}</span>
-              ) : (
-                <span>Welcome, User</span> // Fallback text if no full name
-              )}
+              <span>Welcome, {fullName || 'User'}</span>
             </div>
           </header>
-          
-          {role ? (
-            role.toLowerCase() === "admin" ? (
-              <AdminNavbar />
-            ) : (
-              <SideNavbar key={sideNavbar} prop={sideNavbar} />
-            )
-          ) : null}
+          {isAdmin() ? <AdminNavbar /> : <SideNavbar />}
         </>
       )}
 
       <div className="main">
         <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/homepage" element={<HomePage />} />
+          <Route path="/" element={<Navigate to={isLoggedIn ? getHomePath() : '/login'} replace />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/logout" element={<Logout />} />
 
-          {/* Protected Routes */}
-          <Route
-            path="/admin/user_registration"
-            element={<ProtectedRoute><UserRegistration /></ProtectedRoute>}
-          />
-          <Route path='/admin' element={<AdminDashboard />} />
-          <Route
-            path="/admin/users"
-            element={<ProtectedRoute><Users /></ProtectedRoute>}
-          />
-          <Route
-            path="/admin/departments"
-            element={<ProtectedRoute><Departments /></ProtectedRoute>}
-          />
-          <Route
-            path="/admin/dashboard"
-            element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>}
-          />
-          <Route path='/admin/leave_approval' element={<LeaveApproval/>}></Route>
-          <Route
-            path="/employee"
-            element={<ProtectedRoute><EmployeeDashboard /></ProtectedRoute>}
-          />
-          <Route path='/employee/profile' element={<UserProfile />} />
-          <Route path='/employee/employee_list' element={<EmployeesList />} />
-          <Route path='/employee/departments' element={<Departments />} />
-          <Route path='/employee/leave_requests' element={<Leaves />} />
+          {/* Admin */}
+          <Route path="/admin" element={admin(<AdminDashboard />)} />
+          <Route path="/admin/dashboard" element={<Navigate to="/admin" replace />} />
+          <Route path="/admin/user_registration" element={admin(<UserRegistration />)} />
+          <Route path="/admin/users" element={admin(<Users />)} />
+          <Route path="/admin/departments" element={admin(<Departments />)} />
+          <Route path="/admin/leave_approval" element={admin(<LeaveApproval />)} />
+
+          {/* Employee */}
+          <Route path="/employee" element={user(<EmployeeDashboard />)} />
+          <Route path="/employee/profile" element={user(<UserProfile />)} />
+          <Route path="/employee/employee_list" element={user(<EmployeesList />)} />
+          <Route path="/employee/departments" element={user(<Departments />)} />
+          <Route path="/employee/leave_requests" element={user(<Leaves />)} />
+
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>
     </div>
