@@ -112,3 +112,16 @@ class HRISAPITests(APITestCase):
         self.assertEqual(self.client.patch(url, {'status': 'APPROVED'}).status_code, status.HTTP_200_OK)
         leave.refresh_from_db()
         self.assertEqual(leave.status, 'APPROVED')
+
+
+class DjangoAdminUserTests(APITestCase):
+    def test_users_created_in_django_admin_get_hashed_passwords(self):
+        superuser = User.objects.create_superuser('root', 'root@example.com', 'pass12345', role='Admin')
+        self.client.force_login(superuser)
+        response = self.client.post('/django-admin/authentication/user/add/', {
+            'username': 'hr2', 'email': 'hr2@example.com', 'role': 'Admin',
+            'password1': 'S3cure-pass!', 'password2': 'S3cure-pass!', 'usable_password': 'true',
+        })
+        self.assertEqual(response.status_code, 302)
+        user = User.objects.get(username='hr2')
+        self.assertTrue(user.check_password('S3cure-pass!'))

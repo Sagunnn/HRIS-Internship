@@ -51,7 +51,7 @@ Browser ──▶ │ nginx :80                                         │
             │  ├─ /              → React build (SPA)            │
             │  ├─ /api/v1/media/ → uploaded images (volume)     │
             │  ├─ /static/       → Django admin assets (volume) │
-            │  └─ /api/, /admin/ → proxy ─────────┐             │
+            │  └─ /api/, /django-admin/ → proxy ──┐             │
             └─────────────────────────────────────┼─────────────┘
                                                   ▼
             ┌──────────────── backend container ────────────────┐
@@ -72,7 +72,7 @@ cp .env.example .env        # then set DJANGO_SECRET_KEY and DJANGO_ADMIN_PASSWO
 docker compose up -d --build
 ```
 
-Open <http://localhost:8080> and sign in with the `DJANGO_ADMIN_USERNAME` / `DJANGO_ADMIN_PASSWORD` from your `.env`. That admin account is created on first start. The Django admin site is at <http://localhost:8080/admin/>.
+Open <http://localhost:8080> and sign in with the `DJANGO_ADMIN_USERNAME` / `DJANGO_ADMIN_PASSWORD` from your `.env`. That admin account is created on first start. The Django admin site is at <http://localhost:8080/django-admin/> (`/admin/...` belongs to the React app).
 
 The database, uploaded images, and static files live in named Docker volumes, so they survive restarts. `docker compose down -v` wipes them.
 
