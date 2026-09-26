@@ -1,0 +1,27 @@
+services:
+  backend:
+    build: ./backend
+    env_file: .env
+    environment:
+      DJANGO_DEBUG: "False"
+    volumes:
+      - db-data:/app/data
+      - media:/app/media
+      - static:/app/staticfiles
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    depends_on:
+      - backend
+    ports:
+      - "${HRIS_PORT:-8080}:80"
+    volumes:
+      - media:/srv/media:ro
+      - static:/srv/static:ro
+    restart: unless-stopped
+
+volumes:
+  db-data:
+  media:
+  static:

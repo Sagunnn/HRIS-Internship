@@ -1,54 +1,22 @@
-import axios from "axios";
-import { getAuthHeaders,getRegistrationAuthHeaders } from "./authorization";
-const API_BASE_URL = "http://127.0.0.1:8000/api/v1";
+import api from "./api";
 
-export const fetchEmployees= async () =>{
-    try{
-        const response = await axios.get(`${API_BASE_URL}/register-employee/list/`,{
-            headers: getAuthHeaders()
-        })
-        console.log(response)
-        return response.data
-    }
-    catch (err){
-        console.log(err.response? err.response.data: err.message,'There was an error')
-        return null
-    }
-}
+export const fetchEmployees = async () => {
+  const response = await api.get("/register-employee/list/");
+  return response.data;
+};
 
-export const createEmployee= async(formData) =>{
-    const token= localStorage.getItem('access_token')
-    try{
-        const response= await axios.post(`${API_BASE_URL}/register-employee/`,formData,{
-            headers:getRegistrationAuthHeaders(),
-        })
-        window.location.reload();
-    }
-    catch(err){
-        console.log(err)
-    }
-}
+export const fetchMyProfile = async () => {
+  const response = await api.get("/register-employee/list/me/");
+  return response.data;
+};
 
-export const deleteDepartmentMain= async (deptId)=>{
-    try{
-        const response= await axios.delete(`${API_BASE_URL}/departments/${deptId}/`,{
-            headers:getAuthHeaders()
-        })
-        window.location.reload();
-    }
-    catch(err){
-        console.log(err)
-    }
-}
+// formData is a FormData instance so the profile picture can be uploaded
+export const createEmployee = async (formData) => {
+  const response = await api.post("/register-employee/", formData);
+  return response.data;
+};
 
-export const editDepartmentMain= async (id,data)=>{
-    try{
-        const response=await axios.patch(`${API_BASE_URL}/departments/${id}/`,data,{
-            headers:getAuthHeaders()
-        })
-        window.location.reload();
-    }
-    catch(err){
-        console.log(err)
-    }
-}
+export const updateEmployee = async (id, data) => {
+  const response = await api.patch(`/register-employee/list/${id}/`, data);
+  return response.data;
+};

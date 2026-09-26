@@ -1,54 +1,36 @@
 import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import logo from '../assets/user-logo.png';
-import { Link, useNavigate } from 'react-router-dom'; // Fixed import
+import { logout } from '../services/authorization';
 import '../main.css';
 
+const links = [
+  { to: '/employee', icon: 'dashboard', label: 'Dashboard' },
+  { to: '/employee/profile', icon: 'person', label: 'Profile' },
+  { to: '/employee/departments', icon: 'apartment', label: 'Departments' },
+  { to: '/employee/employee_list', icon: 'group', label: 'Employee List' },
+  { to: '/employee/leave_requests', icon: 'mail', label: 'Leave Requests' },
+];
+
 const SideNavbar = () => {
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    localStorage.removeItem('role');
-    window.location.href = "/login";
-  };
-
-  const isActive = (path) => location.pathname === path;
+  const location = useLocation();
 
   return (
     <div className='employee_navbar'>
       <img src={logo} alt="Logo" className='logo' />
       <ul>
+        {links.map(({ to, icon, label }) => (
+          <li key={to}>
+            <Link to={to} className={location.pathname === to ? 'active' : ''}>
+              <span className="material-symbols-outlined">{icon}</span> {label}
+            </Link>
+          </li>
+        ))}
         <li>
-          <Link to='/employee/' className={isActive('/employee') ? 'active' : ''}>
-            <span className="material-symbols-outlined">dashboard</span> Dashboard
-          </Link>
-        </li>
-        <li>
-          <Link to='/employee/profile' className={isActive('/employee/profile') ? 'active' : ''}>
-            <span className="material-symbols-outlined">person</span> Profile
-          </Link>
-        </li>
-        <li>
-          <Link to='/employee/departments' className={isActive('/employee/departments') ? 'active' : ''}>
-            <span className="material-symbols-outlined">apartment</span> Departments
-          </Link>
-        </li>
-        <li>
-          <Link to='/employee/employee_list' className={isActive('/employee/employee_list') ? 'active' : ''}>
-            <span className="material-symbols-outlined">group</span> Employee List
-          </Link>
-        </li>
-        <li>
-          <Link to="/employee/leave_requests" className={isActive('/employee/leave_requests') ? 'active' : ''}>
-            <span className="material-symbols-outlined">mail</span> Leave Requests
-          </Link>
-        </li>
-        <li>
-          <Link to='/login' onClick={handleLogout}>
+          <Link to='/login' onClick={logout}>
             <span className="material-symbols-outlined">logout</span> Logout
           </Link>
-        </li> 
+        </li>
       </ul>
     </div>
   );

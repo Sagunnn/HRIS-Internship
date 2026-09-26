@@ -1,7 +1,6 @@
 from authentication.models import User
 from rest_framework import serializers
 from django.conf import settings
-from django.conf.urls.static import static
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from employees.models import Employee
 class UserSerializer(serializers.ModelSerializer):
@@ -52,14 +51,11 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def get_token(cls, user):
         token = super().get_token(user)
 
-        # Add custom claims
-        token['role'] = user.role  # Add user role to the token
+        # Add custom claims used by the frontend for routing and the header greeting
+        token['role'] = user.role
+        token['is_staff'] = user.is_staff
 
-        # Fetch full name from Employee model
-        try:
-            employee = Employee.objects.get(user=user)
-            token['full_name'] = employee.get_full_name()  # Add full name to the token
-        except Employee.DoesNotExist:
-            token['full_name'] = "Hello"  # If no employee profile exists for the user, leave it blank
+        employee = Employee.objects.filter(user=user).first()
+        token['full_name'] = employee.get_full_name() if employee else user.username
 
         return token

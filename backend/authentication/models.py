@@ -16,11 +16,11 @@ class User(AbstractUser):
         return f"{self.username}({self.role})"
     
     def is_manager(self):
-        return self.role=='manager'
+        return self.role=='Manager'
     
     def is_admin(self):
-        return self.role=='admin'
+        return self.role=='Admin'
     
     def is_employee(self):
-        return self.role=='employee'
+        return self.role=='Employee'
     
